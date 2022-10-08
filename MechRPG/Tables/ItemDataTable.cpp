@@ -2,7 +2,7 @@
 
 UItemDataTable::UItemDataTable() : Super()
 {
-	path = "D:\\UE5\\MechRPG\\Source\\Tables\\ItemData.csv";
+	path = CSVT::GetTableFilePath("ItemData.csv");
 }
 
 void UItemDataTable::LoadData(TArray<TArray<FString>> inDataStrings)

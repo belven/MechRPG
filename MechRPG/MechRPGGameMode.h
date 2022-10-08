@@ -10,7 +10,4 @@ class AMechRPGGameMode : public AGameModeBase
 
 public:
 	AMechRPGGameMode();
-
-	virtual void BeginPlay() override;
-	virtual void BeginDestroy() override;
 };

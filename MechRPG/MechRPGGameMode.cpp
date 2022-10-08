@@ -3,7 +3,6 @@
 #include "MechRPGGameMode.h"
 #include "MechRPGPlayerController.h"
 #include "MechRPGCharacter.h"
-#include "TableLoader.h"
 #include "UObject/ConstructorHelpers.h"
 
 AMechRPGGameMode::AMechRPGGameMode()
@@ -24,15 +23,4 @@ AMechRPGGameMode::AMechRPGGameMode()
 	{
 		PlayerControllerClass = PlayerControllerBPClass.Class;
 	}
-}
-
-void AMechRPGGameMode::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-void AMechRPGGameMode::BeginDestroy()
-{
-	Super::BeginDestroy();
-	//UTableLoader::GetInstance()->BeginDestroy();
 }
