@@ -102,5 +102,6 @@ class MECHRPG_API UDataStructs : public UObject
 	GENERATED_BODY()
 public:
 	static EWeaponType GetWeaponType(FString typeName);
+	static EItemType GetItemType(FString typeName);
 	static bool GetBoolean(FString value);
 };

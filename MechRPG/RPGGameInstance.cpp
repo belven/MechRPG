@@ -55,9 +55,6 @@ void URPGGameInstance::LoadWeaponStructs()
 {
 	TArray<FCombinedWeaponData> combinedWeaponData;
 	TArray<FItemData> itemData = GetItemDataTable()->GetData();
-	TArray<FWeaponData> weaponData = GetWeaponDataTable()->GetData();
-	TArray<FLaserWeaponData> laserWeaponData = GetLaserWeaponData()->GetData();
-	TArray<FMeleeWeaponData> meleeWeaponData = GetMeleeWeaponData()->GetData();
 
 	for (const FItemData id : itemData)
 	{
@@ -74,6 +71,9 @@ void URPGGameInstance::LoadWeaponStructs()
 			else if (cwd.weaponData.type == EWeaponType::Laser) {
 				cwd.rangedWeaponData = GetRangedWeaponData(cwd.weaponData.ID);
 				cwd.laserWeaponData = GetLaserWeaponData(cwd.rangedWeaponData.ID);
+			}
+			else if (cwd.weaponData.type == EWeaponType::Melee) {
+				cwd.meleeWeaponData = GetMeleeWeaponData(cwd.weaponData.ID);
 			}
 
 			combinedWeaponData.Add(cwd);

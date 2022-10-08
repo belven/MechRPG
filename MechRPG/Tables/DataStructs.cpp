@@ -17,6 +17,23 @@ EWeaponType UDataStructs::GetWeaponType(FString typeName)
 	return EWeaponType::Melee;
 }
 
+EItemType UDataStructs::GetItemType(FString typeName)
+{
+	if (typeName.Equals("Weapon"))
+	{
+		return EItemType::Weapon;
+	}
+	else if (typeName.Equals("Consumable"))
+	{
+		return EItemType::Consumable;
+	}
+	else if (typeName.Equals("Armour"))
+	{
+		return EItemType::Armour;
+	}
+	return EItemType::Consumable;
+}
+
 bool UDataStructs::GetBoolean(FString value)
 {
 	return value.Equals("TRUE") ? true : false;

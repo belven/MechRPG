@@ -1,2 +1,4 @@
-1,1,Melee,1.5,50,TRUE
-2,2,Ranged,0.2,500,TRUE
+1,1,Melee,1.5,50,FALSE
+2,2,Laser,0.2,5,FALSE
+3,3,Projectile,0.6,30,FALSE
+4,4,Laser,1,100,TRUE
