@@ -14,7 +14,7 @@ private:
 	TArray<FItemData> itemData;
 public:
 
-	TArray<FItemData>& GetItemData() 
+	TArray<FItemData>& GetData() 
 	{
 		return itemData;
 	}

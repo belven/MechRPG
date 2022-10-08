@@ -1,6 +1,10 @@
 #include "RPGGameInstance.h"
 #include "Tables/CSVTable.h"
 #include "Tables/ItemDataTable.h"
+#include "Tables/LaserWeaponDataTable.h"
+#include "Tables/MeleeWeaponDataTable.h"
+#include "Tables/ProjectileWeaponDataTable.h"
+#include "Tables/RangedWeaponDataTable.h"
 #include "Tables/WeaponDataTable.h"
 
 void URPGGameInstance::LoadTableFromFile(UCSVTable* table)
@@ -35,26 +39,97 @@ void URPGGameInstance::LoadTableData()
 {
 	LoadTableFromFile(GetItemDataTable());
 	LoadTableFromFile(GetWeaponDataTable());
+	LoadTableFromFile(GetRangedWeaponData());
+	LoadTableFromFile(GetLaserWeaponData());
+	LoadTableFromFile(GetMeleeWeaponData());
 
+	LoadCombinedStructs();
+}
+
+void URPGGameInstance::LoadCombinedStructs()
+{
+	LoadWeaponStructs();
+}
+
+void URPGGameInstance::LoadWeaponStructs()
+{
 	TArray<FCombinedWeaponData> combinedWeaponData;
-	TArray<FItemData> itemData = GetItemDataTable()->GetItemData();
-	TArray<FWeaponData> weaponData = GetWeaponDataTable()->GetWeaponData();
+	TArray<FItemData> itemData = GetItemDataTable()->GetData();
+	TArray<FWeaponData> weaponData = GetWeaponDataTable()->GetData();
+	TArray<FLaserWeaponData> laserWeaponData = GetLaserWeaponData()->GetData();
+	TArray<FMeleeWeaponData> meleeWeaponData = GetMeleeWeaponData()->GetData();
 
-	for (FItemData id : itemData)
+	for (const FItemData id : itemData)
 	{
-		FCombinedWeaponData cwd;
-		cwd.itemData = id;
+		if (id.type == EItemType::Weapon) {
+			FCombinedWeaponData cwd;
+			cwd.itemData = id;
+			cwd.weaponData = GetWeaponData(id.ID);
 
-		for (FWeaponData wd : weaponData)
-		{
-			if (wd.itemID == id.ID)
+			if (cwd.weaponData.type == EWeaponType::Projectile)
 			{
-				cwd.weaponData = wd;
+				cwd.rangedWeaponData = GetRangedWeaponData(cwd.weaponData.ID);
+				cwd.projectileWeaponData = GetProjectileWeaponData(cwd.rangedWeaponData.ID);
 			}
-		}
+			else if (cwd.weaponData.type == EWeaponType::Laser) {
+				cwd.rangedWeaponData = GetRangedWeaponData(cwd.weaponData.ID);
+				cwd.laserWeaponData = GetLaserWeaponData(cwd.rangedWeaponData.ID);
+			}
 
-		combinedWeaponData.Add(cwd);
+			combinedWeaponData.Add(cwd);
+		}
 	}
+}
+
+FWeaponData URPGGameInstance::GetWeaponData(int32 itemID)
+{
+	TArray<FWeaponData> weaponData = GetWeaponDataTable()->GetData();
+	for (const FWeaponData wd : weaponData)
+	{
+		if (wd.itemID == itemID)
+			return wd;
+	}
+	return {};
+}
+
+FMeleeWeaponData URPGGameInstance::GetMeleeWeaponData(int32 weaponID)
+{
+	for (const FMeleeWeaponData wd : GetMeleeWeaponData()->GetData())
+	{
+		if (wd.weaponID == weaponID)
+			return wd;
+	}
+	return {};
+}
+
+FRangedWeaponData URPGGameInstance::GetRangedWeaponData(int32 weaponID)
+{
+	for (const FRangedWeaponData wd : GetRangedWeaponData()->GetData())
+	{
+		if (wd.weaponID == weaponID)
+			return wd;
+	}
+	return {};
+}
+
+FProjectileWeaponData URPGGameInstance::GetProjectileWeaponData(int32 rangedWeaponID)
+{
+	for (const FProjectileWeaponData wd : GetProjectileWeaponData()->GetData())
+	{
+		if (wd.rangedWeaponID == rangedWeaponID)
+			return wd;
+	}
+	return {};
+}
+
+FLaserWeaponData URPGGameInstance::GetLaserWeaponData(int32 rangedWeaponID)
+{
+	for (const FLaserWeaponData wd : GetLaserWeaponData()->GetData())
+	{
+		if (wd.rangedWeaponID == rangedWeaponID)
+			return wd;
+	}
+	return {};
 }
 
 void URPGGameInstance::Init()
@@ -71,8 +146,6 @@ UItemDataTable* URPGGameInstance::GetItemDataTable()
 	}
 
 	return ItemData;
-
-	//return  GetDataTable<UItemDataTable>(ItemData);
 }
 
 UWeaponDataTable* URPGGameInstance::GetWeaponDataTable()
@@ -83,11 +156,44 @@ UWeaponDataTable* URPGGameInstance::GetWeaponDataTable()
 	}
 
 	return WeaponData;
-//	return  GetDataTable<UWeaponDataTable>(WeaponData);
 }
 
-void URPGGameInstance::BeginDestroy()
+URangedWeaponDataTable* URPGGameInstance::GetRangedWeaponData()
 {
-	UObject::BeginDestroy();
-	//ItemData->BeginDestroy();
+	if (rangedWeaponData == NULL)
+	{
+		rangedWeaponData = NewObject<URangedWeaponDataTable>();
+	}
+
+	return rangedWeaponData;
+}
+
+ULaserWeaponDataTable* URPGGameInstance::GetLaserWeaponData()
+{
+	if (laserWeaponData == NULL)
+	{
+		laserWeaponData = NewObject<ULaserWeaponDataTable>();
+	}
+
+	return laserWeaponData;
+}
+
+UProjectileWeaponDataTable* URPGGameInstance::GetProjectileWeaponData()
+{
+	if (projectileWeaponData == NULL)
+	{
+		projectileWeaponData = NewObject<UProjectileWeaponDataTable>();
+	}
+
+	return projectileWeaponData;
+}
+
+UMeleeWeaponDataTable* URPGGameInstance::GetMeleeWeaponData()
+{
+	if (meleeWeaponData == NULL)
+	{
+		meleeWeaponData = NewObject<UMeleeWeaponDataTable>();
+	}
+
+	return meleeWeaponData;
 }

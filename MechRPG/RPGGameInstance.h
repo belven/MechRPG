@@ -3,6 +3,10 @@
 #include "Tables/CSVTable.h"
 #include "RPGGameInstance.generated.h"
 
+class UProjectileWeaponDataTable;
+class UMeleeWeaponDataTable;
+class ULaserWeaponDataTable;
+class URangedWeaponDataTable;
 class UWeaponDataTable;
 class UItemDataTable;
 
@@ -12,22 +16,46 @@ class MECHRPG_API URPGGameInstance : public UGameInstance
 	GENERATED_BODY()
 public:
 	UFUNCTION(BlueprintCallable)
-
 		void LoadTableFromFile(UCSVTable* table);
+
 	void LoadTableData();
+	void LoadCombinedStructs();
+	void LoadWeaponStructs();
+
+	FWeaponData GetWeaponData(int32 itemID);
+	FMeleeWeaponData GetMeleeWeaponData(int32 weaponID);
+	FRangedWeaponData GetRangedWeaponData(int32 weaponID);
+	FProjectileWeaponData GetProjectileWeaponData(int32 rangedWeaponID);
+	FLaserWeaponData GetLaserWeaponData(int32 rangedWeaponID);
+
 	virtual void Init() override;
 
 	UItemDataTable* GetItemDataTable();
 	UWeaponDataTable* GetWeaponDataTable();
-
-	virtual void BeginDestroy() override;
+	URangedWeaponDataTable* GetRangedWeaponData();
+	ULaserWeaponDataTable* GetLaserWeaponData();
+	UProjectileWeaponDataTable* GetProjectileWeaponData();
+	UMeleeWeaponDataTable* GetMeleeWeaponData();
 
 	template<class T> T* GetDataTable(T* value);
 private:
 	UPROPERTY()
 		UItemDataTable* ItemData;
+
 	UPROPERTY()
 		UWeaponDataTable* WeaponData;
+
+	UPROPERTY()
+		URangedWeaponDataTable* rangedWeaponData;
+
+	UPROPERTY()
+		ULaserWeaponDataTable* laserWeaponData;
+
+	UPROPERTY()
+		UMeleeWeaponDataTable* meleeWeaponData;
+
+	UPROPERTY()
+		UProjectileWeaponDataTable* projectileWeaponData;
 };
 
 template <class T>

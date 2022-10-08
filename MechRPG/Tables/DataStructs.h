@@ -11,6 +11,14 @@ enum class  EWeaponType : uint8 {
 	End
 };
 
+UENUM(BlueprintType)
+enum class  EItemType : uint8 {
+	Weapon,
+	Consumable,
+	Armour,
+	End
+};
+
 USTRUCT(BlueprintType)
 struct FItemData
 {
@@ -18,6 +26,7 @@ struct FItemData
 public:
 	int32 ID;
 	FString name;
+	EItemType type;
 };
 
 USTRUCT(BlueprintType)
@@ -31,6 +40,37 @@ public:
 	float useRate;
 	float healthChange;
 	bool heals;
+	int32 range;
+};
+
+USTRUCT(BlueprintType)
+struct FMeleeWeaponData
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	int32 ID;
+	int32 weaponID;
+	float cleaveRadius;
+};
+
+USTRUCT(BlueprintType)
+struct FProjectileWeaponData
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	int32 ID;
+	int32 rangedWeaponID;
+	FString projectileClass;
+};
+
+USTRUCT(BlueprintType)
+struct FRangedWeaponData
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	int32 ID;
+	int32 weaponID;
+	float accuracy;
 };
 
 USTRUCT(BlueprintType)
@@ -51,6 +91,9 @@ public:
 	FItemData itemData;
 	FWeaponData weaponData;
 	FLaserWeaponData laserWeaponData;
+	FRangedWeaponData rangedWeaponData;
+	FMeleeWeaponData meleeWeaponData;
+	FProjectileWeaponData projectileWeaponData;
 };
 
 UCLASS()
