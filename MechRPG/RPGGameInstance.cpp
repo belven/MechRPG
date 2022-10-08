@@ -1,9 +1,6 @@
 #include "RPGGameInstance.h"
-#include "ItemDataTable.h"
-#include "CSVTable.h"
-
-//TSharedPtr<UTableLoader> URPGGameInstance::TableLoader = NULL;
-//TSharedPtr<UItemDataTable> URPGGameInstance::ItemData = NULL;
+#include "Tables/CSVTable.h"
+#include "Tables/ItemDataTable.h"
 
 void URPGGameInstance::LoadTableFromFile(UCSVTable* table)
 {

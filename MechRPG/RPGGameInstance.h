@@ -1,6 +1,6 @@
 #pragma once
 #include "CoreMinimal.h"
-#include "CSVTable.h"
+#include "Tables/CSVTable.h"
 #include "RPGGameInstance.generated.h"
 
 class UItemDataTable;
