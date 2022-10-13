@@ -28,11 +28,21 @@ void URPGGameInstance::LoadTableFromFile(UCSVTable* table)
 		for (int i = 0; i < CSVLines.Num(); i++) {
 			temp_array.Empty();
 			CSVLines[i].ParseIntoArray(temp_array, CSVDelimiters, 2);
-			parsedCSV.Add(temp_array);
+			parsedCSV.Add(CleanData(temp_array));
 		}
 
 		table->LoadData(parsedCSV);
 	}
+}
+
+TArray<FString> URPGGameInstance::CleanData(TArray<FString> strings)
+ {
+	TArray<FString> newStrings;
+	for(FString s : strings)
+	{
+		newStrings.Add(s.TrimQuotes());
+	}
+	return newStrings;
 }
 
 void URPGGameInstance::LoadTableData()

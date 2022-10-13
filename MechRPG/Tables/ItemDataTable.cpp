@@ -14,6 +14,7 @@ void UItemDataTable::LoadData(TArray<TArray<FString>> inDataStrings)
 		data.ID = GetIntFromString(row[index++]);
 		data.name = *row[index++];
 		data.type = DS::GetItemType(row[index++]);
+		data.maxStack = GetIntFromString(row[index++]);
 		itemData.Add(data);
 	}
 }

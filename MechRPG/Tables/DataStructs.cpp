@@ -36,5 +36,5 @@ EItemType UDataStructs::GetItemType(FString typeName)
 
 bool UDataStructs::GetBoolean(FString value)
 {
-	return value.Equals("TRUE") ? true : false;
+	return value.Equals("true") ? true : false;
 }

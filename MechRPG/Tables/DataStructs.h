@@ -27,6 +27,7 @@ public:
 	int32 ID;
 	FString name;
 	EItemType type;
+	int32 maxStack;
 };
 
 USTRUCT(BlueprintType)

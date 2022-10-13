@@ -37,6 +37,7 @@ public:
 	UProjectileWeaponDataTable* GetProjectileWeaponData();
 	UMeleeWeaponDataTable* GetMeleeWeaponData();
 
+	TArray<FString> CleanData(TArray<FString> strings);
 	template<class T> T* GetDataTable(T* value);
 private:
 	UPROPERTY()
