@@ -10,6 +10,7 @@ class MECHRPG_API UProjectileWeapon : public URangedWeapon
 public:
 	FProjectileWeaponData GetProjectileWeaponData() const { return projectileWeaponData; }
 	void SetProjectileWeaponData(FProjectileWeaponData data) { projectileWeaponData = data; }
+	virtual void UseWeapon(const FVector& location) override;
 protected:
 	FProjectileWeaponData projectileWeaponData;
 	

@@ -3,6 +3,7 @@
 #include "UObject/NoExportTypes.h"
 #include "DataStructs.generated.h"
 
+class AMechRPGCharacter;
 UENUM(BlueprintType)
 enum class  EWeaponType : uint8 {
 	Laser,
@@ -17,6 +18,18 @@ enum class  EItemType : uint8 {
 	Consumable,
 	Armour,
 	End
+};
+
+USTRUCT(BlueprintType)
+struct FHealthChange
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	float changeAmount;
+	bool heals;
+
+	UPROPERTY()
+		AMechRPGCharacter* source;
 };
 
 USTRUCT(BlueprintType)
@@ -62,6 +75,8 @@ public:
 	int32 ID;
 	int32 rangedWeaponID;
 	FString projectileClass;
+	int32 magazineSize;
+	float reloadSpeed;
 };
 
 USTRUCT(BlueprintType)

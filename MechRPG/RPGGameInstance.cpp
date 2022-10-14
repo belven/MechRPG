@@ -52,7 +52,7 @@ void URPGGameInstance::LoadTableData()
 	LoadTableFromFile(GetRangedWeaponData());
 	LoadTableFromFile(GetLaserWeaponData());
 	LoadTableFromFile(GetMeleeWeaponData());
-
+	LoadTableFromFile(GetProjectileWeaponData());
 	LoadCombinedStructs();
 }
 
