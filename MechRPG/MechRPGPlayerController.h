@@ -36,10 +36,13 @@ protected:
 	virtual void SetupInputComponent() override;
 	void Fire();
 	void StopFiring();
+	void CalculateMovement(float DeltaSeconds) const;
 
 	void OnSetDestinationPressed();
 	void OnSetDestinationReleased();
 private:
+	float MoveSpeed;
+
 	bool bMovementActive;
 	float FollowTime;
 	float FiringTime;

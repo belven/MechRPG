@@ -21,6 +21,7 @@ AMechRPGPlayerController::AMechRPGPlayerController()
 {
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Default;
+	MoveSpeed = 800.0f;
 }
 
 void AMechRPGPlayerController::OnPossess(APawn* aPawn)
@@ -50,6 +51,9 @@ void AMechRPGPlayerController::PlayerTick(float DeltaTime)
 			const FVector WorldDirection = (Hit.Location - MyPawn->GetActorLocation()).GetSafeNormal();
 			MyPawn->AddMovementInput(WorldDirection, 1.f, false);
 		}
+	} else
+	{
+		CalculateMovement(DeltaTime);
 	}
 
 	if (isFiring) {
@@ -99,6 +103,9 @@ void AMechRPGPlayerController::SetupInputComponent()
 
 	InputComponent->BindAction("SetDestination", IE_Pressed, this, &AMechRPGPlayerController::OnSetDestinationPressed);
 	InputComponent->BindAction("SetDestination", IE_Released, this, &AMechRPGPlayerController::OnSetDestinationReleased);
+
+	InputComponent->BindAxis(MoveForwardBinding);
+	InputComponent->BindAxis(MoveRightBinding);
 }
 
 void AMechRPGPlayerController::Fire()
@@ -120,6 +127,26 @@ void AMechRPGPlayerController::StopFiring()
 		if (mech != NULL) {
 			mechTarget = mech;
 		}
+	}
+}
+
+void AMechRPGPlayerController::CalculateMovement(float DeltaSeconds) const
+{
+	// Find movement direction
+	const float ForwardValue = GetInputAxisValue(MoveForwardBinding); // W S
+	const float RightValue = GetInputAxisValue(MoveRightBinding); // A D
+
+	// Clamp max size so that (X=1, Y=1) doesn't cause faster movement in diagonal directions
+	const FVector MoveDirection = FVector(ForwardValue, RightValue, 0.f).GetClampedToMaxSize(1.0f);
+
+	// Calculate  movement
+	const FVector Movement = MoveDirection * MoveSpeed * DeltaSeconds;
+
+	// If non-zero size, move this actor
+	if (Movement.SizeSquared() > 0.0f)
+	{
+		GetCharacter()->AddMovementInput(FRotationMatrix(GetControlRotation()).GetScaledAxis(EAxis::X), ForwardValue);
+		GetCharacter()->AddMovementInput(FRotationMatrix(GetControlRotation()).GetScaledAxis(EAxis::Y), RightValue);
 	}
 }
 
