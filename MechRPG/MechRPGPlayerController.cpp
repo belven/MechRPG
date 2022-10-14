@@ -7,11 +7,18 @@
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
 #include "MechRPGCharacter.h"
+#include "Items/WeaponCreator.h"
 
 AMechRPGPlayerController::AMechRPGPlayerController()
 {
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Default;
+}
+
+void AMechRPGPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+	UWeaponCreator::CreateWeapon(3, GetWorld());
 }
 
 void AMechRPGPlayerController::PlayerTick(float DeltaTime)

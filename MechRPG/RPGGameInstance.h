@@ -22,6 +22,7 @@ public:
 	void LoadCombinedStructs();
 	void LoadWeaponStructs();
 
+	FItemData GetItemData(int32 itemID);
 	FWeaponData GetWeaponData(int32 itemID);
 	FMeleeWeaponData GetMeleeWeaponData(int32 weaponID);
 	FRangedWeaponData GetRangedWeaponData(int32 weaponID);

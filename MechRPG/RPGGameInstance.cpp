@@ -91,6 +91,17 @@ void URPGGameInstance::LoadWeaponStructs()
 	}
 }
 
+FItemData URPGGameInstance::GetItemData(int32 itemID)
+{
+	TArray<FItemData> itemData = GetItemDataTable()->GetData();
+	for (const FItemData id : itemData)
+	{
+		if (id.ID == itemID)
+			return id;
+	}
+	return {};
+}
+
 FWeaponData URPGGameInstance::GetWeaponData(int32 itemID)
 {
 	TArray<FWeaponData> weaponData = GetWeaponDataTable()->GetData();
