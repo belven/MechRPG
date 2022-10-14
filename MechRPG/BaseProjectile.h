@@ -1,6 +1,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "MechRPGCharacter.h"
+#include "Components/SphereComponent.h"
 #include "GameFramework/Actor.h"
 #include "BaseProjectile.generated.h"
 
@@ -16,17 +17,21 @@ public:
 
 	static const float Default_Initial_Speed;
 	static const float Default_Initial_Lifespan;
-	
+
 	UFUNCTION()
 		virtual void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
-	FHealthChange healthChange;
+	void SetHealthChange(FHealthChange inHealthChange);
 
 protected:
+	FHealthChange healthChange;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Projectile, meta = (AllowPrivateAccess = "true"))
 		UStaticMeshComponent* ProjectileMesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 		UProjectileMovementComponent* ProjectileMovement;
+
+	UPROPERTY()
+		USphereComponent* CollisionComp;
 };

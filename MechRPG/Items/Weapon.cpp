@@ -14,9 +14,11 @@ void UWeapon::ShotTimerExpired()
 
 ABaseProjectile* UWeapon::SpawnProjectile(FVector gunLocation, FRotator FireRotation, UClass* projectileClass) {
 	ABaseProjectile* projectile = mSpawnProjectile(projectileClass);
-	projectile->healthChange.changeAmount = weaponData.healthChange;
-	projectile->healthChange.source = GetOwner();
-	projectile->healthChange.heals = weaponData.heals;
+	FHealthChange hc;
+	hc.changeAmount = weaponData.healthChange;
+	hc.source = GetOwner();
+	hc.heals = weaponData.heals;
+	projectile->SetHealthChange(hc);
 	return projectile;
 }
 
