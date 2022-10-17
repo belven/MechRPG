@@ -55,7 +55,6 @@ void ABaseProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 			Destroy();			
 		}
 	}
-
 }
 
 void ABaseProjectile::SetHealthChange(FHealthChange inHealthChange)

@@ -21,6 +21,18 @@ enum class  EItemType : uint8 {
 };
 
 USTRUCT(BlueprintType)
+struct FCombatStateChange
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	bool oldState;
+	bool newState;
+
+	UPROPERTY()
+		UObject* source;
+};
+
+USTRUCT(BlueprintType)
 struct FHealthChange
 {
 	GENERATED_USTRUCT_BODY()

@@ -1,5 +1,6 @@
 #pragma once
 #include "CoreMinimal.h"
+#include "Events/EventListener.h"
 #include "Templates/SubclassOf.h"
 #include "GameFramework/PlayerController.h"
 #include "MechRPGPlayerController.generated.h"
@@ -8,7 +9,7 @@ class AMechRPGCharacter;
 class UNiagaraSystem;
 
 UCLASS()
-class AMechRPGPlayerController : public APlayerController
+class AMechRPGPlayerController : public APlayerController, public IEventListener
 {
 	GENERATED_BODY()
 
@@ -20,6 +21,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 		UNiagaraSystem* FXCursor;
+
+
+	virtual void EventTriggered(UBaseEvent* inEvent) override;
 protected:
 	virtual void OnPossess(APawn* aPawn) override;
 	static const FName MoveForwardBinding;

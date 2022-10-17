@@ -6,4 +6,4 @@
 IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, MechRPG, "MechRPG" );
 
 DEFINE_LOG_CATEGORY(LogMechRPG)
- 
+DEFINE_LOG_CATEGORY(HealthChangeLog);

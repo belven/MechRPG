@@ -1,9 +1,13 @@
 #include "MechRPGPlayerController.h"
+#include "MechRPG.h"
 #include "GameFramework/Pawn.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
 #include "MechRPGCharacter.h"
+#include "Events/CombatStateEvent.h"
+#include "Events/HealthChangeEvent.h"
+#include "Events/RPGEventManager.h"
 #include "Items/Weapon.h"
 #include "Items/WeaponCreator.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -24,6 +28,18 @@ AMechRPGPlayerController::AMechRPGPlayerController()
 	MoveSpeed = 800.0f;
 }
 
+void AMechRPGPlayerController::EventTriggered(UBaseEvent* inEvent)
+{
+	if (inEvent->GetEventType() == EEventType::HealthChange) {
+		UHealthChangeEvent* hce = Cast<UHealthChangeEvent>(inEvent);
+		UE_LOG(HealthChangeLog, Log, TEXT("Owner Took %d damage"), hce->GetChange());
+	} else if (inEvent->GetEventType() == EEventType::CombatState) {
+		UCombatStateEvent* cse = Cast<UCombatStateEvent>(inEvent);
+		const FString change = cse->GetStateChange().newState ? TEXT("true") : TEXT("false");
+		UE_LOG(HealthChangeLog, Log, TEXT("Combat State changed to %s"), change);
+	}
+}
+
 void AMechRPGPlayerController::OnPossess(APawn* aPawn)
 {
 	Super::OnPossess(aPawn);
@@ -33,6 +49,10 @@ void AMechRPGPlayerController::OnPossess(APawn* aPawn)
 void AMechRPGPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+	TArray<EEventType> types;
+	types.Add(EEventType::HealthChange);
+	types.Add(EEventType::CombatState);
+	URPGEventManager::GetInstance()->RegisterListener(types, this);
 }
 
 void AMechRPGPlayerController::PlayerTick(float DeltaTime)

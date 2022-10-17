@@ -22,6 +22,8 @@ public:
 private:
 	UPROPERTY()
 		UWeapon* equippedWeapon;
+
+	bool inCombat;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class UCameraComponent* TopDownCameraComponent;

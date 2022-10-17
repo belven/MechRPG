@@ -10,6 +10,9 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Materials/Material.h"
 #include "Engine/World.h"
+#include "Events/CombatStateEvent.h"
+#include "Events/HealthChangeEvent.h"
+#include "Events/RPGEventManager.h"
 
 AMechRPGCharacter::AMechRPGCharacter()
 {
@@ -41,5 +44,17 @@ AMechRPGCharacter::AMechRPGCharacter()
 
 void AMechRPGCharacter::ChangeHealth(const FHealthChange& health_change)
 {
+	mEventTriggered(mCreateHealthChangeEvent(NULL, health_change, true));
 
+	if(!inCombat && !health_change.heals)
+	{
+		FCombatStateChange csc;
+		csc.source = this;
+		csc.oldState = false;
+		csc.newState = true;
+		inCombat = true;
+		mEventTriggered(mCreateCombatStateEvent(NULL, csc));
+	}
+
+	mEventTriggered(mCreateHealthChangeEvent(NULL, health_change, false));
 }
