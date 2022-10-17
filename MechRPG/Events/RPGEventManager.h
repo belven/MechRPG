@@ -5,7 +5,7 @@
 #include "UObject/NoExportTypes.h"
 #include "RPGEventManager.generated.h"
 
-#define mEventTriggered URPGEventManager::GetInstance()->EventTriggered
+#define mEventTriggered(GameInstance, baseEvent)  GameInstance->GetEventManager()->EventTriggered(baseEvent)
 
 USTRUCT(BlueprintType)
 struct FListeners 
@@ -21,15 +21,11 @@ class MECHRPG_API URPGEventManager : public UObject
 	GENERATED_BODY()
 
 public:
-		UFUNCTION(BlueprintCallable)
-		static URPGEventManager* GetInstance();
-
 		TMap<EEventType, FListeners>& GetManagerListeners()  { return ManagerListeners; }
 
 		void RegisterListener(TArray<EEventType> types, IEventListener* listener);
 		void EventTriggered(UBaseEvent* inEvent);
 private:
 	TMap< EEventType, FListeners> ManagerListeners;
-
-	static TSharedPtr<URPGEventManager> EventManager;
+	
 };

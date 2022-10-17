@@ -1,4 +1,6 @@
 #include "RPGGameInstance.h"
+
+#include "Events/RPGEventManager.h"
 #include "Tables/CSVTable.h"
 #include "Tables/ItemDataTable.h"
 #include "Tables/LaserWeaponDataTable.h"
@@ -157,6 +159,16 @@ void URPGGameInstance::Init()
 {
 	Super::Init();
 	LoadTableData();
+}
+
+URPGEventManager* URPGGameInstance::GetEventManager()
+{
+	if (eventManager == NULL)
+	{
+		eventManager = NewObject<URPGEventManager>();
+	}
+
+	return eventManager;
 }
 
 UItemDataTable* URPGGameInstance::GetItemDataTable()

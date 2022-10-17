@@ -1,19 +1,6 @@
 #include "RPGEventManager.h"
 #include "BaseEvent.h"
 
-TSharedPtr<URPGEventManager> URPGEventManager::EventManager = NULL;
-
-URPGEventManager* URPGEventManager::GetInstance()
-{
-	if (!EventManager.IsValid())
-	{
-		EventManager = MakeShareable(NewObject<URPGEventManager>(URPGEventManager::StaticClass()));
-	}
-
-	return EventManager.Get();
-}
-
-
 void URPGEventManager::RegisterListener(TArray<EEventType> types, IEventListener* listener)
 {
 	for (EEventType type : types) {		

@@ -4,6 +4,7 @@
 #include "Items/Weapon.h"
 #include "MechRPGCharacter.generated.h"
 
+class URPGGameInstance;
 class UWeapon;
 UCLASS(Blueprintable)
 class AMechRPGCharacter : public ACharacter
@@ -19,9 +20,14 @@ public:
 	FORCEINLINE UWeapon* GetEquippedWeapon() { return equippedWeapon; }
 	FORCEINLINE void SetEquippedWeapon(UWeapon* weapon) { equippedWeapon = weapon; equippedWeapon->SetOwner(this); }
 	void ChangeHealth(const FHealthChange& health_change);
+
+	URPGGameInstance* GetGameInstance();
 private:
 	UPROPERTY()
 		UWeapon* equippedWeapon;
+
+	UPROPERTY()
+		URPGGameInstance* gameInstance;
 
 	bool inCombat;
 	

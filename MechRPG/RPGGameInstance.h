@@ -3,6 +3,9 @@
 #include "Tables/CSVTable.h"
 #include "RPGGameInstance.generated.h"
 
+#define GameInstance(world) Cast<URPGGameInstance>(UGameplayStatics::GetGameInstance(world))
+
+class URPGEventManager;
 class UProjectileWeaponDataTable;
 class UMeleeWeaponDataTable;
 class ULaserWeaponDataTable;
@@ -30,6 +33,7 @@ public:
 	FLaserWeaponData GetLaserWeaponData(int32 rangedWeaponID);
 
 	virtual void Init() override;
+	URPGEventManager* GetEventManager();
 
 	UItemDataTable* GetItemDataTable();
 	UWeaponDataTable* GetWeaponDataTable();
@@ -41,6 +45,9 @@ public:
 	TArray<FString> CleanData(TArray<FString> strings);
 	template<class T> T* GetDataTable(T* value);
 private:
+	UPROPERTY()
+		URPGEventManager* eventManager;
+
 	UPROPERTY()
 		UItemDataTable* ItemData;
 

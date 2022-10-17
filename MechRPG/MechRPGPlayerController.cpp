@@ -5,12 +5,15 @@
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
 #include "MechRPGCharacter.h"
+#include "RPGGameInstance.h"
 #include "Events/CombatStateEvent.h"
 #include "Events/HealthChangeEvent.h"
 #include "Events/RPGEventManager.h"
 #include "Items/Weapon.h"
 #include "Items/WeaponCreator.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/GameplayStatics.h"
+#include "MechRPG/RPGGameInstance.h"
 
 #define mActorLocation GetCharacter()->GetActorLocation()
 #define mActorRotation GetCharacter()->GetActorRotation()
@@ -32,11 +35,10 @@ void AMechRPGPlayerController::EventTriggered(UBaseEvent* inEvent)
 {
 	if (inEvent->GetEventType() == EEventType::HealthChange) {
 		UHealthChangeEvent* hce = Cast<UHealthChangeEvent>(inEvent);
-		UE_LOG(HealthChangeLog, Log, TEXT("Owner Took %d damage"), hce->GetChange());
+		UE_LOG(HealthChangeLog, Log, TEXT("Owner Took %d damage"), hce->GetChange().changeAmount);
 	} else if (inEvent->GetEventType() == EEventType::CombatState) {
 		UCombatStateEvent* cse = Cast<UCombatStateEvent>(inEvent);
-		const FString change = cse->GetStateChange().newState ? TEXT("true") : TEXT("false");
-		UE_LOG(HealthChangeLog, Log, TEXT("Combat State changed to %s"), change);
+		UE_LOG(HealthChangeLog, Log, TEXT("Combat State changed to %s"), cse->GetStateChange().newState ? TEXT("true") : TEXT("false"));
 	}
 }
 
@@ -44,15 +46,17 @@ void AMechRPGPlayerController::OnPossess(APawn* aPawn)
 {
 	Super::OnPossess(aPawn);
 	mAsMech(aPawn)->SetEquippedWeapon(UWeaponCreator::CreateWeapon(4, GetWorld()));
+
+	URPGGameInstance* gameIn = GameInstance(GetWorld());
+	TArray<EEventType> types;
+	types.Add(EEventType::HealthChange);
+	types.Add(EEventType::CombatState);
+	gameIn->GetEventManager()->RegisterListener(types, this);
 }
 
 void AMechRPGPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	TArray<EEventType> types;
-	types.Add(EEventType::HealthChange);
-	types.Add(EEventType::CombatState);
-	URPGEventManager::GetInstance()->RegisterListener(types, this);
 }
 
 void AMechRPGPlayerController::PlayerTick(float DeltaTime)

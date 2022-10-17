@@ -1,6 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "MechRPGCharacter.h"
+
+#include "RPGGameInstance.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
 #include "Components/DecalComponent.h"
@@ -13,6 +15,7 @@
 #include "Events/CombatStateEvent.h"
 #include "Events/HealthChangeEvent.h"
 #include "Events/RPGEventManager.h"
+#include "Kismet/GameplayStatics.h"
 
 AMechRPGCharacter::AMechRPGCharacter()
 {
@@ -44,17 +47,24 @@ AMechRPGCharacter::AMechRPGCharacter()
 
 void AMechRPGCharacter::ChangeHealth(const FHealthChange& health_change)
 {
-	mEventTriggered(mCreateHealthChangeEvent(NULL, health_change, true));
+	mEventTriggered(GetGameInstance(), mCreateHealthChangeEvent(NULL, health_change, true));
 
-	if(!inCombat && !health_change.heals)
+	if (!inCombat && !health_change.heals)
 	{
 		FCombatStateChange csc;
 		csc.source = this;
 		csc.oldState = false;
 		csc.newState = true;
 		inCombat = true;
-		mEventTriggered(mCreateCombatStateEvent(NULL, csc));
+		mEventTriggered(GetGameInstance(), mCreateCombatStateEvent(NULL, csc));
 	}
 
-	mEventTriggered(mCreateHealthChangeEvent(NULL, health_change, false));
+	mEventTriggered(GetGameInstance(), mCreateHealthChangeEvent(NULL, health_change, false));
+}
+
+URPGGameInstance* AMechRPGCharacter::GetGameInstance()
+{
+	if (gameInstance == NULL)
+		gameInstance = GameInstance(GetWorld());
+	return gameInstance;
 }
