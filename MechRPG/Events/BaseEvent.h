@@ -17,13 +17,13 @@ class MECHRPG_API UBaseEvent : public UObject
 {
 	GENERATED_BODY()
 private:
-	IEventListener* EventOwner;
+	UObject* EventOwner;
 	EEventType EventType;
 
 public:
 	EEventType GetEventType() const { return EventType; }
 	void SetEventType(EEventType val) { EventType = val; }
 
-	IEventListener* GetEventOwner() const { return EventOwner; }
-	void SetEventOwner(IEventListener* eOwner) { EventOwner = eOwner; }
+	UObject* GetEventOwner() const { return EventOwner; }
+	void SetEventOwner(UObject* eOwner) { EventOwner = eOwner; }
 };

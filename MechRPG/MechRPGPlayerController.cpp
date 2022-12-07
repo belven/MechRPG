@@ -35,8 +35,11 @@ void AMechRPGPlayerController::EventTriggered(UBaseEvent* inEvent)
 {
 	if (inEvent->GetEventType() == EEventType::HealthChange) {
 		UHealthChangeEvent* hce = Cast<UHealthChangeEvent>(inEvent);
-		UE_LOG(HealthChangeLog, Log, TEXT("Owner Took %d damage"), hce->GetChange().changeAmount);
-	} else if (inEvent->GetEventType() == EEventType::CombatState) {
+
+		if (!hce->GetPreChange())
+			UE_LOG(HealthChangeLog, Log, TEXT("Owner Took %f damage"), hce->GetChange().changeAmount);
+	}
+	else if (inEvent->GetEventType() == EEventType::CombatState) {
 		UCombatStateEvent* cse = Cast<UCombatStateEvent>(inEvent);
 		UE_LOG(HealthChangeLog, Log, TEXT("Combat State changed to %s"), cse->GetStateChange().newState ? TEXT("true") : TEXT("false"));
 	}
@@ -54,15 +57,10 @@ void AMechRPGPlayerController::OnPossess(APawn* aPawn)
 	gameIn->GetEventManager()->RegisterListener(types, this);
 }
 
-void AMechRPGPlayerController::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
 void AMechRPGPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
-	
+
 	GetHitResultUnderCursor(ECC_WorldStatic, false, Hit);
 
 	if (bMovementActive)
@@ -75,7 +73,8 @@ void AMechRPGPlayerController::PlayerTick(float DeltaTime)
 			const FVector WorldDirection = (Hit.Location - MyPawn->GetActorLocation()).GetSafeNormal();
 			MyPawn->AddMovementInput(WorldDirection, 1.f, false);
 		}
-	} else
+	}
+	else
 	{
 		CalculateMovement(DeltaTime);
 	}
@@ -109,7 +108,6 @@ void AMechRPGPlayerController::LookAt(FVector lookAtLocation)
 	FRotator lookAt = UKismetMathLibrary::FindLookAtRotation(mActorLocation, lookAtLocation);
 	lookAt.Pitch = mActorRotation.Pitch;
 	lookAt.Roll = mActorRotation.Roll;
-
 	GetCharacter()->SetActorRotation(lookAt);
 }
 
@@ -162,11 +160,8 @@ void AMechRPGPlayerController::CalculateMovement(float DeltaSeconds) const
 
 	// Clamp max size so that (X=1, Y=1) doesn't cause faster movement in diagonal directions
 	const FVector MoveDirection = FVector(ForwardValue, RightValue, 0.f).GetClampedToMaxSize(1.0f);
-
-	// Calculate  movement
 	const FVector Movement = MoveDirection * MoveSpeed * DeltaSeconds;
-
-	// If non-zero size, move this actor
+	
 	if (Movement.SizeSquared() > 0.0f)
 	{
 		GetCharacter()->AddMovementInput(FRotationMatrix(GetControlRotation()).GetScaledAxis(EAxis::X), ForwardValue);

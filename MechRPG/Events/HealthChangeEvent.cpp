@@ -1,6 +1,6 @@
 #include "HealthChangeEvent.h"
 
-UHealthChangeEvent* UHealthChangeEvent::CreateHealthChangeEvent(IEventListener* owner, FHealthChange hc, bool preHealthChange)
+UHealthChangeEvent* UHealthChangeEvent::CreateHealthChangeEvent(UObject* owner, FHealthChange hc, bool preHealthChange)
 {
 	UHealthChangeEvent* hce = NewObject<UHealthChangeEvent>();
 	hce->hc = hc;

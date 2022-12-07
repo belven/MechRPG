@@ -1,6 +1,6 @@
 #include "CombatStateEvent.h"
 
-UCombatStateEvent* UCombatStateEvent::CreateCombatStateEvent(IEventListener* owner, FCombatStateChange change)
+UCombatStateEvent* UCombatStateEvent::CreateCombatStateEvent(UObject* owner, FCombatStateChange change)
 {
 	UCombatStateEvent* cse = NewObject<UCombatStateEvent>();
 	cse->csc = change;

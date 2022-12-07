@@ -11,7 +11,7 @@ class MECHRPG_API UHealthChangeEvent : public UBaseEvent
 {
 	GENERATED_BODY()
 public:
-	static UHealthChangeEvent* CreateHealthChangeEvent(IEventListener* owner, FHealthChange hc, bool preHealthChange);
+	static UHealthChangeEvent* CreateHealthChangeEvent(UObject* owner, FHealthChange hc, bool preHealthChange);
 
 	FHealthChange GetChange() { return hc; }
 	bool GetPreChange() { return preHealthChange; }

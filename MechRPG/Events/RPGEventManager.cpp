@@ -15,7 +15,9 @@ void URPGEventManager::EventTriggered(UBaseEvent* inEvent)
 
 	for (IEventListener* ei : eventListeners)
 	{
-		if (inEvent->GetEventOwner() == NULL || ei != inEvent->GetEventOwner())
+		const bool isEventOwner = inEvent->GetEventOwner()->Implements<UEventListener>() && ei != Cast<IEventListener>(inEvent->GetEventOwner());
+		if (inEvent->GetEventOwner() == NULL || !isEventOwner) {
 			ei->EventTriggered(inEvent);
+		}
 	}
 }

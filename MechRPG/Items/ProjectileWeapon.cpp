@@ -1,5 +1,4 @@
 #include "ProjectileWeapon.h"
-
 #include "MechRPG/BaseProjectile.h"
 
 void UProjectileWeapon::UseWeapon(const FVector& location)

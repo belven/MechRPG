@@ -1,16 +1,9 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 #include "MechRPGCharacter.h"
-
 #include "RPGGameInstance.h"
-#include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
-#include "Components/DecalComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "Materials/Material.h"
 #include "Engine/World.h"
 #include "Events/CombatStateEvent.h"
 #include "Events/HealthChangeEvent.h"
@@ -47,7 +40,7 @@ AMechRPGCharacter::AMechRPGCharacter()
 
 void AMechRPGCharacter::ChangeHealth(const FHealthChange& health_change)
 {
-	mEventTriggered(GetGameInstance(), mCreateHealthChangeEvent(NULL, health_change, true));
+	mEventTriggered(GetGameInstance(), mCreateHealthChangeEvent(this, health_change, true));
 
 	if (!inCombat && !health_change.heals)
 	{
@@ -56,10 +49,28 @@ void AMechRPGCharacter::ChangeHealth(const FHealthChange& health_change)
 		csc.oldState = false;
 		csc.newState = true;
 		inCombat = true;
-		mEventTriggered(GetGameInstance(), mCreateCombatStateEvent(NULL, csc));
+		mEventTriggered(GetGameInstance(), mCreateCombatStateEvent(this, csc));
 	}
 
-	mEventTriggered(GetGameInstance(), mCreateHealthChangeEvent(NULL, health_change, false));
+	if (health_change.heals) {
+		// Restore Health
+	}
+	else {
+		float damageTaken = GetDamageAfterResistance(health_change.changeAmount, health_change.damageType);
+		// Take Damage
+	}
+
+	mEventTriggered(GetGameInstance(), mCreateHealthChangeEvent(this, health_change, false));
+}
+
+float  AMechRPGCharacter::GetDamageAfterResistance(float damage, EDamageType type) {
+	float damageReduction = 100 / (100 + GetDamageResistance(type));
+	float invertPercent = 1 - damageReduction;
+	return damage * invertPercent;
+}
+
+int32  AMechRPGCharacter::GetDamageResistance(EDamageType type) {
+
 }
 
 URPGGameInstance* AMechRPGCharacter::GetGameInstance()

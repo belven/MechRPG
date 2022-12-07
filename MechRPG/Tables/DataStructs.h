@@ -20,6 +20,15 @@ enum class  EItemType : uint8 {
 	End
 };
 
+UENUM(BlueprintType)
+enum class  EDamageType : uint8 {
+	Energy,
+	Kinetic,
+	Fire,
+	Fire,
+	End
+};
+
 USTRUCT(BlueprintType)
 struct FCombatStateChange
 {
@@ -39,6 +48,7 @@ struct FHealthChange
 public:
 	float changeAmount;
 	bool heals;
+	EDamageType damageType;
 
 	UPROPERTY()
 		AMechRPGCharacter* source;

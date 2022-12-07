@@ -21,6 +21,7 @@ public:
 	FORCEINLINE void SetEquippedWeapon(UWeapon* weapon) { equippedWeapon = weapon; equippedWeapon->SetOwner(this); }
 	void ChangeHealth(const FHealthChange& health_change);
 
+
 	URPGGameInstance* GetGameInstance();
 private:
 	UPROPERTY()
@@ -36,4 +37,7 @@ private:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class USpringArmComponent* CameraBoom;
+
+	float GetDamageAfterResistance(float damage, EDamageType type);
+	int32 GetDamageResistance(EDamageType type);
 };

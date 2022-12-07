@@ -34,14 +34,14 @@ ABaseProjectile::ABaseProjectile()
 	ProjectileMovement->MaxSpeed = Default_Initial_Speed;
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = false;
-	ProjectileMovement->ProjectileGravityScale = 0.f; // No gravity
+	ProjectileMovement->ProjectileGravityScale = 0.f;
 	ProjectileMesh->SetWorldScale3D(FVector(0.4));
 	InitialLifeSpan = Default_Initial_Lifespan;
 }
 
 void ABaseProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (OtherActor != NULL && OtherActor != this && OtherActor->GetClass() != ABaseProjectile::StaticClass() && OtherActor != healthChange.source)
+	if (OtherActor != NULL && OtherActor != this && OtherActor != healthChange.source)
 	{
 		AMechRPGCharacter* mechHit = Cast<AMechRPGCharacter>(OtherActor);
 
