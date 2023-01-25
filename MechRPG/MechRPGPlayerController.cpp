@@ -152,7 +152,7 @@ void AMechRPGPlayerController::StopFiring()
 	}
 }
 
-void AMechRPGPlayerController::CalculateMovement(float DeltaSeconds) const
+void AMechRPGPlayerController::CalculateMovement(float DeltaSeconds)
 {
 	// Find movement direction
 	const float ForwardValue = GetInputAxisValue(MoveForwardBinding); // W S
@@ -164,6 +164,7 @@ void AMechRPGPlayerController::CalculateMovement(float DeltaSeconds) const
 	
 	if (Movement.SizeSquared() > 0.0f)
 	{
+		StopMovement();
 		GetCharacter()->AddMovementInput(FRotationMatrix(GetControlRotation()).GetScaledAxis(EAxis::X), ForwardValue);
 		GetCharacter()->AddMovementInput(FRotationMatrix(GetControlRotation()).GetScaledAxis(EAxis::Y), RightValue);
 	}

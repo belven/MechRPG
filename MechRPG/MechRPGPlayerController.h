@@ -39,7 +39,7 @@ protected:
 	void StopFiring();
 
 	virtual void SetupInputComponent() override;
-	void CalculateMovement(float DeltaSeconds) const;
+	void CalculateMovement(float DeltaSeconds);
 	void OnSetDestinationPressed();
 	void OnSetDestinationReleased();
 private:

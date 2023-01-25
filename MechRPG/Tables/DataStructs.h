@@ -25,7 +25,6 @@ enum class  EDamageType : uint8 {
 	Energy,
 	Kinetic,
 	Fire,
-	Fire,
 	End
 };
 

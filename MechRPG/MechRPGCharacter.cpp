@@ -70,7 +70,7 @@ float  AMechRPGCharacter::GetDamageAfterResistance(float damage, EDamageType typ
 }
 
 int32  AMechRPGCharacter::GetDamageResistance(EDamageType type) {
-
+	return 1;
 }
 
 URPGGameInstance* AMechRPGCharacter::GetGameInstance()
