@@ -12,6 +12,8 @@ class ULaserWeaponDataTable;
 class URangedWeaponDataTable;
 class UWeaponDataTable;
 class UItemDataTable;
+class UArmourCSVDataTable;
+class UArmourResistanceDataTable;
 
 UCLASS()
 class MECHRPG_API URPGGameInstance : public UGameInstance
@@ -31,6 +33,8 @@ public:
 	FRangedWeaponData GetRangedWeaponData(int32 weaponID);
 	FProjectileWeaponData GetProjectileWeaponData(int32 rangedWeaponID);
 	FLaserWeaponData GetLaserWeaponData(int32 rangedWeaponID);
+	FArmourData GetArmourData(int32 itemID);
+	FArmourResistanceData GetArmourResistanceData(int32 armourID);
 
 	virtual void Init() override;
 	URPGEventManager* GetEventManager();
@@ -41,6 +45,8 @@ public:
 	ULaserWeaponDataTable* GetLaserWeaponData();
 	UProjectileWeaponDataTable* GetProjectileWeaponData();
 	UMeleeWeaponDataTable* GetMeleeWeaponData();
+	UArmourCSVDataTable* GetArmourDataTable();
+	UArmourResistanceDataTable* GetArmourResistanceDataTable();
 
 	TArray<FString> CleanData(TArray<FString> strings);
 	template<class T> T* GetDataTable(T* value);
@@ -65,6 +71,12 @@ private:
 
 	UPROPERTY()
 		UProjectileWeaponDataTable* projectileWeaponData;
+
+	UPROPERTY()
+		UArmourCSVDataTable* armourDataTable;
+
+	UPROPERTY()
+		UArmourResistanceDataTable* armourResistanceDataTable;
 };
 
 template <class T>

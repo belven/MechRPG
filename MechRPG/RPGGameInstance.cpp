@@ -7,6 +7,8 @@
 #include "Tables/MeleeWeaponDataTable.h"
 #include "Tables/ProjectileWeaponDataTable.h"
 #include "Tables/RangedWeaponDataTable.h"
+#include "Tables/ArmourCSVDataTable.h"
+#include "Tables/ArmourResistanceDataTable.h"
 #include "Tables/WeaponDataTable.h"
 
 void URPGGameInstance::LoadTableFromFile(UCSVTable* table)
@@ -55,6 +57,8 @@ void URPGGameInstance::LoadTableData()
 	LoadTableFromFile(GetLaserWeaponData());
 	LoadTableFromFile(GetMeleeWeaponData());
 	LoadTableFromFile(GetProjectileWeaponData());
+	LoadTableFromFile(GetArmourDataTable());
+	LoadTableFromFile(GetArmourResistanceDataTable());
 	LoadCombinedStructs();
 }
 
@@ -155,6 +159,26 @@ FLaserWeaponData URPGGameInstance::GetLaserWeaponData(int32 rangedWeaponID)
 	return {};
 }
 
+FArmourData URPGGameInstance::GetArmourData(int32 itemID)
+{
+	for (const FArmourData ad : GetArmourDataTable()->GetData())
+	{
+		if (ad.itemID == itemID)
+			return ad;
+	}
+	return {};
+}
+
+FArmourResistanceData URPGGameInstance::GetArmourResistanceData(int32 armourID)
+{
+	for (const FArmourResistanceData ard : GetArmourResistanceDataTable()->GetData())
+	{
+		if (ard.armourID == armourID)
+			return ard;
+	}
+	return {};
+}
+
 void URPGGameInstance::Init()
 {
 	Super::Init();
@@ -229,4 +253,24 @@ UMeleeWeaponDataTable* URPGGameInstance::GetMeleeWeaponData()
 	}
 
 	return meleeWeaponData;
+}
+
+UArmourCSVDataTable* URPGGameInstance::GetArmourDataTable()
+{
+	if (armourDataTable == NULL)
+	{
+		armourDataTable = NewObject<UArmourCSVDataTable>();
+	}
+
+	return armourDataTable;
+}
+
+UArmourResistanceDataTable* URPGGameInstance::GetArmourResistanceDataTable()
+{
+	if (armourResistanceDataTable == NULL)
+	{
+		armourResistanceDataTable = NewObject<UArmourResistanceDataTable>();
+	}
+
+	return armourResistanceDataTable;
 }

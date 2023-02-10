@@ -2,7 +2,7 @@
 
 UArmourResistanceDataTable::UArmourResistanceDataTable() : Super()
 {
-	path = "D:\\UE5\\MechRPG\\Source\\Tables\\ArmourResistanceData.csv";
+	path = CSVT::GetTableFilePath("ArmourResistanceData.csv");
 }
 
 void UArmourResistanceDataTable::LoadData(TArray<TArray<FString>> inDataStrings)
