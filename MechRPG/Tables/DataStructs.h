@@ -28,6 +28,17 @@ enum class  EDamageType : uint8 {
 	End
 };
 
+UENUM(BlueprintType)
+enum class  EArmourSlot : uint8 {
+	Head,
+	Chest,
+	Left_Leg,
+	RIght_Leg,
+	Left_Arm,
+	Right_Arm,
+	End
+};
+
 USTRUCT(BlueprintType)
 struct FCombatStateChange
 {
@@ -62,6 +73,27 @@ public:
 	FString name;
 	EItemType type;
 	int32 maxStack;
+};
+
+USTRUCT(BlueprintType)
+struct FArmourData
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	int32 ID;
+	int32 itemID;
+	EArmourSlot slot;
+};
+
+USTRUCT(BlueprintType)
+struct FArmourResistanceData
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	int32 ID;
+	int32 armourID;
+	float resistanceAmount;
+	EDamageType type;
 };
 
 USTRUCT(BlueprintType)
@@ -140,5 +172,7 @@ class MECHRPG_API UDataStructs : public UObject
 public:
 	static EWeaponType GetWeaponType(FString typeName);
 	static EItemType GetItemType(FString typeName);
+	static EArmourSlot GetArmourSlot(FString typeName);
+	static EDamageType GetDamageType(FString typeName);
 	static bool GetBoolean(FString value);
 };

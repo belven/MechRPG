@@ -22,7 +22,7 @@ void URPGGameInstance::LoadTableFromFile(UCSVTable* table)
 
 		const TCHAR* Terminators[] = { L"\r", L"\n" };
 		const TCHAR* CSVDelimiters[] = { TEXT(","), TEXT("\t") };
-
+		
 		TArray<FString> CSVLines;
 		FileContent.ParseIntoArray(CSVLines, Terminators, 2);
 
