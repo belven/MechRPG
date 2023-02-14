@@ -27,6 +27,8 @@ public:
 	URPGGameInstance* GetGameInstance();
 	void EquipArmour(UArmour* armour);
 
+	virtual void BeginPlay() override;
+
 private:
 	UPROPERTY()
 		UWeapon* equippedWeapon;

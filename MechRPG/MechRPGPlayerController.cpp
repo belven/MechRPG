@@ -51,11 +51,7 @@ void AMechRPGPlayerController::OnPossess(APawn* aPawn)
 {
 	Super::OnPossess(aPawn);
 	mAsMech(aPawn)->SetEquippedWeapon(UWeaponCreator::CreateWeapon(4, GetWorld()));
-
-	UArmour* a = UArmourCreator::CreateArmour(5, GetWorld());
-
-	mAsMech(aPawn)->EquipArmour(a);
-
+	
 	URPGGameInstance* gameIn = GameInstance(GetWorld());
 	TArray<EEventType> types;
 	types.Add(EEventType::HealthChange);
