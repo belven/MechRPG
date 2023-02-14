@@ -8,6 +8,7 @@
 #include "Events/CombatStateEvent.h"
 #include "Events/HealthChangeEvent.h"
 #include "Events/RPGEventManager.h"
+#include "Items/Armour.h"
 #include "Kismet/GameplayStatics.h"
 
 AMechRPGCharacter::AMechRPGCharacter()
@@ -64,13 +65,26 @@ void AMechRPGCharacter::ChangeHealth(const FHealthChange& health_change)
 }
 
 float  AMechRPGCharacter::GetDamageAfterResistance(float damage, EDamageType type) {
-	float damageReduction = 100 / (100 + GetDamageResistance(type));
-	float invertPercent = 1 - damageReduction;
+	const float damageReduction = 100 / (100 + GetDamageResistance(type));
+	const float invertPercent = 1 - damageReduction;
 	return damage * invertPercent;
 }
 
 int32  AMechRPGCharacter::GetDamageResistance(EDamageType type) {
-	return 1;
+	int32 total = 0;
+
+	TArray<UArmour*> armour;
+	equippedArmour.GenerateValueArray(armour);
+	
+	for(const UArmour* a : armour)
+	{
+		for (const FArmourResistanceData ard : a->GetResistances()) {
+			if (ard.type == type)
+				total += ard.resistanceAmount;
+		}
+	}
+
+	return total;
 }
 
 URPGGameInstance* AMechRPGCharacter::GetGameInstance()
@@ -78,4 +92,9 @@ URPGGameInstance* AMechRPGCharacter::GetGameInstance()
 	if (gameInstance == NULL)
 		gameInstance = GameInstance(GetWorld());
 	return gameInstance;
+}
+
+void AMechRPGCharacter::EquipArmour(UArmour* armour)
+{
+	equippedArmour.FindOrAdd(armour->GetData().slot, armour);
 }

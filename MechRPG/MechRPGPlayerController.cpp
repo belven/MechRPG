@@ -9,6 +9,8 @@
 #include "Events/CombatStateEvent.h"
 #include "Events/HealthChangeEvent.h"
 #include "Events/RPGEventManager.h"
+#include "Items/Armour.h"
+#include "Items/ArmourCreator.h"
 #include "Items/Weapon.h"
 #include "Items/WeaponCreator.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -48,7 +50,11 @@ void AMechRPGPlayerController::EventTriggered(UBaseEvent* inEvent)
 void AMechRPGPlayerController::OnPossess(APawn* aPawn)
 {
 	Super::OnPossess(aPawn);
-	mAsMech(aPawn)->SetEquippedWeapon(UWeaponCreator::CreateWeapon(1, GetWorld()));
+	mAsMech(aPawn)->SetEquippedWeapon(UWeaponCreator::CreateWeapon(4, GetWorld()));
+
+	UArmour* a = UArmourCreator::CreateArmour(5, GetWorld());
+
+	mAsMech(aPawn)->EquipArmour(a);
 
 	URPGGameInstance* gameIn = GameInstance(GetWorld());
 	TArray<EEventType> types;

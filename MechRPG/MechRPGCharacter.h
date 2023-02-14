@@ -6,6 +6,9 @@
 
 class URPGGameInstance;
 class UWeapon;
+class UArmour;
+
+
 UCLASS(Blueprintable)
 class AMechRPGCharacter : public ACharacter
 {
@@ -20,12 +23,16 @@ public:
 	FORCEINLINE UWeapon* GetEquippedWeapon() { return equippedWeapon; }
 	FORCEINLINE void SetEquippedWeapon(UWeapon* weapon) { equippedWeapon = weapon; equippedWeapon->SetOwner(this); }
 	void ChangeHealth(const FHealthChange& health_change);
-
-
+	
 	URPGGameInstance* GetGameInstance();
+	void EquipArmour(UArmour* armour);
+
 private:
 	UPROPERTY()
 		UWeapon* equippedWeapon;
+
+	UPROPERTY()
+		TMap<EArmourSlot, UArmour*> equippedArmour;
 
 	UPROPERTY()
 		URPGGameInstance* gameInstance;

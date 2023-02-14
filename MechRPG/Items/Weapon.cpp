@@ -18,6 +18,7 @@ ABaseProjectile* UWeapon::SpawnProjectile(FVector gunLocation, FRotator FireRota
 	hc.changeAmount = weaponData.healthChange;
 	hc.source = GetOwner();
 	hc.heals = weaponData.heals;
+	hc.damageType = EDamageType::Kinetic;
 	projectile->SetHealthChange(hc);
 	return projectile;
 }

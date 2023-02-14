@@ -7,6 +7,8 @@
 #define DS UDataStructs
 #define SourceFolder FPaths::GameSourceDir()
 #define TablesFolder SourceFolder + "Tables/"
+
+// ReSharper disable once IdentifierTypo
 #define CSVT UCSVTable
 
 UCLASS()
@@ -29,6 +31,6 @@ protected:
 	TArray<TArray<FString>> dataStrings;
 	FString path;
 
-	int32 GetIntFromString(FString value) { return FCString::Atoi(*value);  }
-	float GetFloatFromString(FString value) { return FCString::Atof(*value); }
+	static int32 GetIntFromString(FString value) { return FCString::Atoi(*value);  }
+	static float GetFloatFromString(FString value) { return FCString::Atof(*value); }
 };

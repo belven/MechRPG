@@ -13,11 +13,11 @@
 
 void URPGGameInstance::LoadTableFromFile(UCSVTable* table)
 {
-	TArray<TArray<FString>> parsedCSV;
 	const FString path = table->GetPath();
 
 	if (FPaths::FileExists(path))
 	{
+		TArray<TArray<FString>> parsedCSV;
 		FString FileContent;
 
 		FFileHelper::LoadFileToString(FileContent, *path);
