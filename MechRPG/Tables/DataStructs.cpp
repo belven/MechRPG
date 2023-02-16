@@ -80,6 +80,27 @@ EDamageType UDataStructs::GetDamageType(FString typeName)
 	return EDamageType::Kinetic;
 }
 
+ECharacterType UDataStructs::GetCharacterType(FString typeName)
+{
+	if (typeName.Equals("Player"))
+	{
+		return ECharacterType::Player;
+	}
+	else if (typeName.Equals("Ally"))
+	{
+		return ECharacterType::Ally;
+	}
+	else if (typeName.Equals("Enemy"))
+	{
+		return ECharacterType::Enemy;
+	}
+	else if (typeName.Equals("Neutral"))
+	{
+		return ECharacterType::Neutral;
+	}
+	return ECharacterType::Neutral;
+}
+
 bool UDataStructs::GetBoolean(FString value)
 {
 	return value.Equals("true") ? true : false;

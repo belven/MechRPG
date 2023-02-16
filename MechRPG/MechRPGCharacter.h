@@ -1,5 +1,6 @@
 #pragma once
 #include "CoreMinimal.h"
+#include "Damagable.h"
 #include "GameFramework/Character.h"
 #include "Items/Weapon.h"
 #include "MechRPGCharacter.generated.h"
@@ -8,9 +9,17 @@ class URPGGameInstance;
 class UWeapon;
 class UArmour;
 
+USTRUCT(BlueprintType)
+struct FCharacterStats
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	float health;
+	float moveSpeed;	
+};
 
 UCLASS(Blueprintable)
-class AMechRPGCharacter : public ACharacter
+class AMechRPGCharacter : public ACharacter, public IDamagable
 {
 	GENERATED_BODY()
 
@@ -22,13 +31,17 @@ public:
 
 	FORCEINLINE UWeapon* GetEquippedWeapon() { return equippedWeapon; }
 	FORCEINLINE void SetEquippedWeapon(UWeapon* weapon) { equippedWeapon = weapon; equippedWeapon->SetOwner(this); }
-	void ChangeHealth(const FHealthChange& health_change);
 	
 	URPGGameInstance* GetGameInstance();
 	void EquipArmour(UArmour* armour);
 
 	virtual void BeginPlay() override;
 
+	// IDamagable Interface
+	virtual void ChangeHealth(FHealthChange& health_change) override;
+	virtual bool IsDead() override { return currentStats.health <= 0;  };
+	virtual float GetCurrentHealth() override { return currentStats.health; }
+	virtual float GetMaxHealth() override { return maxStats.health; }
 private:
 	UPROPERTY()
 		UWeapon* equippedWeapon;
@@ -38,6 +51,9 @@ private:
 
 	UPROPERTY()
 		URPGGameInstance* gameInstance;
+
+	FCharacterStats currentStats;
+	FCharacterStats maxStats;
 
 	bool inCombat;
 	

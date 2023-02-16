@@ -29,6 +29,15 @@ enum class  EDamageType : uint8 {
 };
 
 UENUM(BlueprintType)
+enum class  ECharacterType : uint8 {
+	Player,
+	Neutral,
+	Ally,
+	Enemy,
+	End
+};
+
+UENUM(BlueprintType)
 enum class  EArmourSlot : uint8 {
 	Head,
 	Chest,
@@ -62,6 +71,28 @@ public:
 
 	UPROPERTY()
 		AMechRPGCharacter* source;
+};
+
+USTRUCT(BlueprintType)
+struct FLoadoutData
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	int32 ID;
+	int32 entityID;
+	ECharacterType type;
+	int32 weaponID;
+	int32 headArmourID;
+	int32 chestArmourID;
+	int32 leftLegArmourID;
+	int32 rightLegArmourID;
+	int32 leftArmArmourID;
+	int32 rightArmArmourID;
+	int32 abilityOneID;
+	int32 abilityTwoID;
+	int32 abilityThreeID;
+	int32 health;
+	int32 moveSpeed;
 };
 
 USTRUCT(BlueprintType)
@@ -174,5 +205,6 @@ public:
 	static EItemType GetItemType(FString typeName);
 	static EArmourSlot GetArmourSlot(FString typeName);
 	static EDamageType GetDamageType(FString typeName);
+	static ECharacterType GetCharacterType(FString typeName);
 	static bool GetBoolean(FString value);
 };

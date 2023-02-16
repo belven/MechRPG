@@ -10,6 +10,7 @@
 #include "Events/RPGEventManager.h"
 #include "Items/Armour.h"
 #include "Items/ArmourCreator.h"
+#include "Items/WeaponCreator.h"
 #include "Kismet/GameplayStatics.h"
 
 AMechRPGCharacter::AMechRPGCharacter()
@@ -38,9 +39,13 @@ AMechRPGCharacter::AMechRPGCharacter()
 
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
+
+	maxStats.health = 1000;
+	maxStats.moveSpeed = 800;
+	currentStats = maxStats;
 }
 
-void AMechRPGCharacter::ChangeHealth(const FHealthChange& health_change)
+void AMechRPGCharacter::ChangeHealth(FHealthChange& health_change)
 {
 	mEventTriggered(GetGameInstance(), mCreateHealthChangeEvent(this, health_change, true));
 
@@ -55,12 +60,14 @@ void AMechRPGCharacter::ChangeHealth(const FHealthChange& health_change)
 	}
 
 	if (health_change.heals) {
-		// Restore Health
+		currentStats.health += health_change.changeAmount;
 	}
 	else {
-		float damageTaken = GetDamageAfterResistance(health_change.changeAmount, health_change.damageType);
-		// Take Damage
+		health_change.changeAmount = GetDamageAfterResistance(health_change.changeAmount, health_change.damageType);
+		currentStats.health -= health_change.changeAmount;
 	}
+
+	FMath::Clamp(health_change.heals, 0, maxStats.health);
 
 	mEventTriggered(GetGameInstance(), mCreateHealthChangeEvent(this, health_change, false));
 }
@@ -103,10 +110,15 @@ void AMechRPGCharacter::EquipArmour(UArmour* armour)
 void AMechRPGCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	const FLoadoutData ld = GetGameInstance()->GetLoadoutData(1);
+	
+	SetEquippedWeapon(UWeaponCreator::CreateWeapon(ld.weaponID, GetWorld()));
 
-	EquipArmour(UArmourCreator::CreateArmour(5, GetWorld()));
-	EquipArmour(UArmourCreator::CreateArmour(6, GetWorld()));
-	EquipArmour(UArmourCreator::CreateArmour(7, GetWorld()));
-	EquipArmour(UArmourCreator::CreateArmour(8, GetWorld()));
-	EquipArmour(UArmourCreator::CreateArmour(9, GetWorld()));
+	EquipArmour(UArmourCreator::CreateArmour(ld.headArmourID, GetWorld()));
+	EquipArmour(UArmourCreator::CreateArmour(ld.chestArmourID, GetWorld()));
+	EquipArmour(UArmourCreator::CreateArmour(ld.leftArmArmourID, GetWorld()));
+	EquipArmour(UArmourCreator::CreateArmour(ld.rightArmArmourID, GetWorld()));
+	EquipArmour(UArmourCreator::CreateArmour(ld.leftLegArmourID, GetWorld()));
+	EquipArmour(UArmourCreator::CreateArmour(ld.rightLegArmourID, GetWorld()));
 }

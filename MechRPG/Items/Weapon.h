@@ -20,7 +20,7 @@ public:
 
 	FWeaponData GetWeaponData() const { return weaponData; }
 	void SetWeaponData(FWeaponData data) { weaponData = data; }
-	virtual void UseWeapon(const FVector& location);
+	virtual void UseWeapon(const FVector& LookAtRotation);
 	
 	AMechRPGCharacter* GetOwner() const { return owner; }
 	void SetOwner(AMechRPGCharacter* val) { owner = val; }

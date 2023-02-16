@@ -1,7 +1,7 @@
 #include "ProjectileWeapon.h"
 #include "MechRPG/BaseProjectile.h"
 
-void UProjectileWeapon::UseWeapon(const FVector& location)
+void UProjectileWeapon::UseWeapon(const FVector& LookAtRotation)
 {
 	if (canFire)
 	{
@@ -12,9 +12,9 @@ void UProjectileWeapon::UseWeapon(const FVector& location)
 		}
 		else
 		{
-			if (location.SizeSquared() > 0.0f)
+			if (LookAtRotation.SizeSquared() > 0.0f)
 			{
-				const FRotator FireRotation = location.Rotation();
+				const FRotator FireRotation = LookAtRotation.Rotation();
 				const FVector gunLocation = owner->GetActorLocation() + FireRotation.RotateVector(GunOffset);
 
 				ABaseProjectile* proj = SpawnProjectile(gunLocation, FireRotation, ABaseProjectile::StaticClass());

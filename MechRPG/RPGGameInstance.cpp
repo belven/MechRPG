@@ -9,6 +9,7 @@
 #include "Tables/RangedWeaponDataTable.h"
 #include "Tables/ArmourCSVDataTable.h"
 #include "Tables/ArmourResistanceDataTable.h"
+#include "Tables/LoadoutTableData.h"
 #include "Tables/WeaponDataTable.h"
 
 void URPGGameInstance::LoadTableFromFile(UCSVTable* table)
@@ -59,6 +60,7 @@ void URPGGameInstance::LoadTableData()
 	LoadTableFromFile(GetProjectileWeaponData());
 	LoadTableFromFile(GetArmourDataTable());
 	LoadTableFromFile(GetArmourResistanceDataTable());
+	LoadTableFromFile(GetLoadoutTableData());
 	LoadCombinedStructs();
 }
 
@@ -179,6 +181,16 @@ FArmourResistanceData URPGGameInstance::GetArmourResistanceData(int32 armourID)
 	return {};
 }
 
+FLoadoutData URPGGameInstance::GetLoadoutData(int32 entityID)
+{
+	for (const FLoadoutData ld : GetLoadoutTableData()->GetData())
+	{
+		if (ld.entityID == entityID)
+			return ld;
+	}
+	return {};
+}
+
 void URPGGameInstance::Init()
 {
 	Super::Init();
@@ -273,4 +285,14 @@ UArmourResistanceDataTable* URPGGameInstance::GetArmourResistanceDataTable()
 	}
 
 	return armourResistanceDataTable;
+}
+
+ULoadoutTableData* URPGGameInstance::GetLoadoutTableData()
+{
+	if (loadoutTableData == NULL)
+	{
+		loadoutTableData = NewObject<ULoadoutTableData>();
+	}
+
+	return loadoutTableData;
 }

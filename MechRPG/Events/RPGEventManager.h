@@ -26,6 +26,6 @@ public:
 		void RegisterListener(TArray<EEventType> types, IEventListener* listener);
 		void EventTriggered(UBaseEvent* inEvent);
 private:
-	TMap< EEventType, FListeners> ManagerListeners;
+	TMap<EEventType, FListeners> ManagerListeners;
 	
 };

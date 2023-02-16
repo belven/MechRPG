@@ -50,7 +50,6 @@ void AMechRPGPlayerController::EventTriggered(UBaseEvent* inEvent)
 void AMechRPGPlayerController::OnPossess(APawn* aPawn)
 {
 	Super::OnPossess(aPawn);
-	mAsMech(aPawn)->SetEquippedWeapon(UWeaponCreator::CreateWeapon(4, GetWorld()));
 	
 	URPGGameInstance* gameIn = GameInstance(GetWorld());
 	TArray<EEventType> types;
@@ -68,7 +67,7 @@ void AMechRPGPlayerController::PlayerTick(float DeltaTime)
 	if (bMovementActive)
 	{
 		FollowTime += DeltaTime;
-
+		
 		APawn* const MyPawn = GetPawn();
 		if (MyPawn)
 		{

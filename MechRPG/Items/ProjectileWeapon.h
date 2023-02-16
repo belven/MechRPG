@@ -10,7 +10,7 @@ class MECHRPG_API UProjectileWeapon : public URangedWeapon
 public:
 	FProjectileWeaponData GetProjectileWeaponData() const { return projectileWeaponData; }
 	void SetProjectileWeaponData(FProjectileWeaponData data) { projectileWeaponData = data; currentAmmo = data.magazineSize;  }
-	virtual void UseWeapon(const FVector& location) override;
+	virtual void UseWeapon(const FVector& LookAtRotation) override;
 
 	FTimerHandle TimerHandle_ReloadExpired;
 	void ReloadEExpired();
