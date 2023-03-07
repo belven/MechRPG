@@ -1,4 +1,6 @@
 #include "BaseAIController.h"
+
+#include "BaseProjectile.h"
 #include "Kismet/GameplayStatics.h"
 #include "RPGGameInstance.h"
 #include "Events/BaseEvent.h"
@@ -6,6 +8,7 @@
 #include "Events/RPGEventManager.h"
 #include "MechRPGCharacter.h"
 #include "Damagable.h"
+#include "Abilities/BaseAbility.h"
 #include "Kismet/KismetMathLibrary.h"
 
 #define mActorLocation GetCharacter()->GetActorLocation()
@@ -23,6 +26,14 @@ void ABaseAIController::Tick(float DeltaTime)
 		const UWeapon* weapon = mCurrentWeapon();
 
 		LookAt(targetLocation);
+
+		for (UBaseAbility* ability : mAsMech(GetCharacter())->GetAbilities())
+		{
+			if (!ability->IsOnCooldown())
+			{
+				ability->Use(target);
+			}
+		}
 
 		if (weapon != NULL) {
 

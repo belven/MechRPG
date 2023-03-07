@@ -43,16 +43,15 @@ void ABaseProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 {
 	if (OtherActor != NULL && OtherActor != this && OtherActor != healthChange.source)
 	{
-		AMechRPGCharacter* mechHit = Cast<AMechRPGCharacter>(OtherActor);
-
-		if(mechHit != NULL)
+		if (OtherActor->Implements<UDamagable>())
 		{
-			mechHit->ChangeHealth(healthChange);
+			IDamagable* target = Cast<IDamagable>(OtherActor);
+			target->ChangeHealth(healthChange);
 			Destroy();
 		}
 		else
 		{
-			Destroy();			
+			Destroy();
 		}
 	}
 }

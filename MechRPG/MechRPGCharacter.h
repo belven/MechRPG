@@ -8,6 +8,7 @@
 class URPGGameInstance;
 class UWeapon;
 class UArmour;
+class UBaseAbility;
 
 USTRUCT(BlueprintType)
 struct FCharacterStats
@@ -35,6 +36,8 @@ public:
 	URPGGameInstance* GetGameInstance();
 	void EquipArmour(UArmour* armour);
 
+	TArray<UBaseAbility*>& GetAbilities() { return abilities; }
+
 	virtual void BeginPlay() override;
 
 	// IDamagable Interface
@@ -48,6 +51,9 @@ private:
 
 	UPROPERTY()
 		TMap<EArmourSlot, UArmour*> equippedArmour;
+
+	UPROPERTY()
+		TArray<UBaseAbility*> abilities;
 
 	UPROPERTY()
 		URPGGameInstance* gameInstance;

@@ -29,14 +29,19 @@ public:
 	void LoadWeaponStructs();
 
 	FItemData GetItemData(int32 itemID);
+
 	FWeaponData GetWeaponData(int32 itemID);
 	FMeleeWeaponData GetMeleeWeaponData(int32 weaponID);
 	FRangedWeaponData GetRangedWeaponData(int32 weaponID);
 	FProjectileWeaponData GetProjectileWeaponData(int32 rangedWeaponID);
 	FLaserWeaponData GetLaserWeaponData(int32 rangedWeaponID);
+
 	FArmourData GetArmourData(int32 itemID);
 	FArmourResistanceData GetArmourResistanceData(int32 armourID);
+
 	FLoadoutData GetLoadoutData(int32 entityID);
+	FAbilityData GetAbilityData(int32 abilityID);
+	FSingleTargetAbilityData GetSingleTargetAbilityData(int32 abilityID);
 
 	virtual void Init() override;
 	URPGEventManager* GetEventManager();

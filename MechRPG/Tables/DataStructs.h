@@ -196,6 +196,54 @@ public:
 	FProjectileWeaponData projectileWeaponData;
 };
 
+UENUM(BlueprintType)
+enum class  EAbilityType : uint8 {
+	SingleTarget,
+	AOE,
+	End
+};
+
+USTRUCT(BlueprintType)
+struct FAbilityData
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	int32 ID;
+	FString name;
+	float cooldown = 0.1f;
+	int32 range;
+	EAbilityType type;	
+};
+
+USTRUCT(BlueprintType)
+struct FCombatAbilityData
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	int32 ID;
+	int32 abilityID;
+	float healthChange;
+	EDamageType damageType;
+	bool heals;
+};
+
+USTRUCT(BlueprintType)
+struct FSingleTargetAbilityData : public FCombatAbilityData
+{
+	GENERATED_USTRUCT_BODY()
+public:
+};
+
+USTRUCT(BlueprintType)
+struct FAOEAbilityData : public FCombatAbilityData
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	int32 radius;
+	float growthRate;
+
+};
+
 UCLASS()
 class MECHRPG_API UDataStructs : public UObject
 {

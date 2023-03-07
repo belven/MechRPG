@@ -1,5 +1,6 @@
 #include "MechRPGCharacter.h"
 #include "RPGGameInstance.h"
+#include "Abilities/AbilityCreator.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -121,4 +122,6 @@ void AMechRPGCharacter::BeginPlay()
 	EquipArmour(UArmourCreator::CreateArmour(ld.rightArmArmourID, GetWorld()));
 	EquipArmour(UArmourCreator::CreateArmour(ld.leftLegArmourID, GetWorld()));
 	EquipArmour(UArmourCreator::CreateArmour(ld.rightLegArmourID, GetWorld()));
+
+	abilities.Add(UAbilityCreator::CreateAbility(1, GetWorld(), this));
 }

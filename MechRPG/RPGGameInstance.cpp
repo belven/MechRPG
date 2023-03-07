@@ -191,6 +191,28 @@ FLoadoutData URPGGameInstance::GetLoadoutData(int32 entityID)
 	return {};
 }
 
+FAbilityData URPGGameInstance::GetAbilityData(int32 abilityID)
+{
+	FAbilityData ad;
+	ad.ID = 1;
+	ad.cooldown = 1.5;
+	ad.range = 3000;
+	ad.name = "Test Ability";
+	ad.type = EAbilityType::SingleTarget;
+	return ad;
+}
+
+FSingleTargetAbilityData URPGGameInstance::GetSingleTargetAbilityData(int32 abilityID)
+{
+	FSingleTargetAbilityData stad;
+	stad.ID = 1;
+	stad.abilityID = 1;
+	stad.damageType = EDamageType::Fire;
+	stad.healthChange = 40;
+	stad.heals = false;
+	return stad;
+}
+
 void URPGGameInstance::Init()
 {
 	Super::Init();
