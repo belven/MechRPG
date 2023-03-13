@@ -24,6 +24,7 @@ void ABaseAIController::Tick(float DeltaTime)
 	{
 		const FVector targetLocation = mTargetActor()->GetActorLocation();
 		const UWeapon* weapon = mCurrentWeapon();
+		bool abilityUsed = false;
 
 		LookAt(targetLocation);
 
@@ -32,10 +33,11 @@ void ABaseAIController::Tick(float DeltaTime)
 			if (!ability->IsOnCooldown())
 			{
 				ability->Use(target);
+				abilityUsed = true;
 			}
 		}
 
-		if (weapon != NULL) {
+		if (!abilityUsed && weapon != NULL) {
 
 			if (FVector::Dist(mActorLocation, targetLocation) <= weapon->GetWeaponData().range) {
 				StopMovement();

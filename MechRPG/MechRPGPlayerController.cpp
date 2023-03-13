@@ -56,6 +56,8 @@ void AMechRPGPlayerController::OnPossess(APawn* aPawn)
 	types.Add(EEventType::HealthChange);
 	types.Add(EEventType::CombatState);
 	gameIn->GetEventManager()->RegisterListener(types, this);
+
+	mAsMech(GetCharacter())->SetFaction(EFaction::Synths);
 }
 
 void AMechRPGPlayerController::PlayerTick(float DeltaTime)

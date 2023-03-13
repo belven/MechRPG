@@ -1,5 +1,6 @@
 #include "RPGGameInstance.h"
 
+#include "FactionManager.h"
 #include "Events/RPGEventManager.h"
 #include "Tables/CSVTable.h"
 #include "Tables/ItemDataTable.h"
@@ -98,6 +99,17 @@ void URPGGameInstance::LoadWeaponStructs()
 		}
 	}
 }
+
+UFactionManager* URPGGameInstance::GetFactionManager()
+{
+	if (factionManager == NULL)
+	{
+		factionManager = NewObject<UFactionManager>();
+	}
+
+	return factionManager;
+}
+
 
 FItemData URPGGameInstance::GetItemData(int32 itemID)
 {
@@ -208,7 +220,7 @@ FSingleTargetAbilityData URPGGameInstance::GetSingleTargetAbilityData(int32 abil
 	stad.ID = 1;
 	stad.abilityID = 1;
 	stad.damageType = EDamageType::Fire;
-	stad.healthChange = 40;
+	stad.healthChange = 100;
 	stad.heals = false;
 	return stad;
 }

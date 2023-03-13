@@ -15,6 +15,7 @@ class UItemDataTable;
 class UArmourCSVDataTable;
 class UArmourResistanceDataTable;
 class ULoadoutTableData;
+class UFactionManager;
 
 UCLASS()
 class MECHRPG_API URPGGameInstance : public UGameInstance
@@ -27,6 +28,8 @@ public:
 	void LoadTableData();
 	void LoadCombinedStructs();
 	void LoadWeaponStructs();
+
+	UFactionManager* GetFactionManager();
 
 	FItemData GetItemData(int32 itemID);
 
@@ -61,6 +64,9 @@ public:
 private:
 	UPROPERTY()
 		URPGEventManager* eventManager;
+
+	UPROPERTY()
+	UFactionManager* factionManager;
 
 	UPROPERTY()
 		UItemDataTable* ItemData;

@@ -44,6 +44,7 @@ AMechRPGCharacter::AMechRPGCharacter()
 	maxStats.health = 1000;
 	maxStats.moveSpeed = 800;
 	currentStats = maxStats;
+	faction = EFaction::Bandits;
 }
 
 void AMechRPGCharacter::ChangeHealth(FHealthChange& health_change)

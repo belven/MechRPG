@@ -11,8 +11,7 @@
 // ReSharper disable once IdentifierTypo
 #define CSVT UCSVTable
 
-UCLASS()
-class MECHRPG_API UCSVTable : public UObject
+UCLASS() class MECHRPG_API UCSVTable : public UObject
 {
 	GENERATED_BODY()
 public:

@@ -41,13 +41,19 @@ ABaseProjectile::ABaseProjectile()
 
 void ABaseProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (OtherActor != NULL && OtherActor != this && OtherActor != healthChange.source)
+	AMechRPGCharacter* us = healthChange.source;
+
+	if (OtherActor != NULL && OtherActor != this && OtherActor != us)
 	{
 		if (OtherActor->Implements<UDamagable>())
 		{
-			IDamagable* target = Cast<IDamagable>(OtherActor);
-			target->ChangeHealth(healthChange);
-			Destroy();
+			ITeam* hitTeam = Cast<ITeam>(OtherActor);
+
+			if (hitTeam->GetRelationship(us, us->GetGameInstance()) == ERelationshipType::Enemy) {
+				IDamagable* hit = Cast<IDamagable>(OtherActor);
+				hit->ChangeHealth(healthChange);
+				Destroy();
+			}
 		}
 		else
 		{
