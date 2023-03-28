@@ -1,6 +1,7 @@
 #include "FindEnemyQueryContext.h"
 #include "BaseAIController.h"
 #include "EnvironmentQuery/Items/EnvQueryItemType_Actor.h"
+#include "EnvironmentQuery/Items/EnvQueryItemType_Point.h"
 
 void UFindEnemyQueryContext::ProvideContext(FEnvQueryInstance& QueryInstance, FEnvQueryContextData& ContextData) const
 {
@@ -11,6 +12,7 @@ void UFindEnemyQueryContext::ProvideContext(FEnvQueryInstance& QueryInstance, FE
 	if (AICon && AICon->GetTarget() != NULL)
 	{
 		//Set the context SeeingPawn to the provided context data
-		UEnvQueryItemType_Actor::SetContextHelper(ContextData, Cast<AActor>(AICon->GetTarget()));
+		//UEnvQueryItemType_Actor::SetContextHelper(ContextData, Cast<AActor>(AICon->GetTarget()));
+		UEnvQueryItemType_Point::SetContextHelper(ContextData, AICon->GetLastKnowLocation());
 	}
 }

@@ -12,6 +12,7 @@
 #include "Components/CapsuleComponent.h"
 #include "EnvironmentQuery/EnvQuery.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
@@ -28,7 +29,7 @@ ABaseAIController::ABaseAIController() : Super()
 	sightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Config"));
 	PerceptionComponent->ConfigureSense(*sightConfig);
 	PerceptionComponent->SetDominantSense(sightConfig->GetSenseImplementation());
-	PerceptionComponent->OnPerceptionUpdated.AddDynamic(this, &ABaseAIController::PerceptionUpdated);
+	PerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &ABaseAIController::TargetPerceptionUpdated);
 
 	MyQuery = CreateDefaultSubobject<UEnvQuery>(TEXT("AIPerception Query"));
 	static ConstructorHelpers::FObjectFinder<UEnvQuery> playerLocationQuery(TEXT("EnvQuery'/Game/TopDown/EQS_FindPlayer.EQS_FindPlayer'"));
@@ -37,36 +38,35 @@ ABaseAIController::ABaseAIController() : Super()
 	{
 		MyQuery = playerLocationQuery.Object;
 	}
-
 }
 
-void ABaseAIController::PerceptionUpdated(const TArray<AActor*>& testActors)
+void ABaseAIController::TargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
-	if (target == NULL) {
-		for (AActor* other : testActors)
-		{
-			AMechRPGCharacter* mech = mAsMech(other);
-			if (mech != NULL) {
-				if (mech->GetRelationship(mAsMech(GetCharacter()), mech->GetGameInstance()) == ERelationshipType::Enemy)
-				{
-					target = mech;
-					GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "I see you!");
-					break;
-				}
-			}
-		}
-	}
-	else
+	if (Actor == Cast<AActor>(target))
 	{
-		FActorPerceptionBlueprintInfo info;
-		PerceptionComponent->GetActorsPerception(GetCharacter(), info);
+		lastKnowLocation = Stimulus.StimulusLocation;
 
-		for (FAIStimulus aiStim : info.LastSensedStimuli)
+		if (!Stimulus.WasSuccessfullySensed())
 		{
-			if (aiStim.Type == sightConfig->GetSenseID() && !aiStim.WasSuccessfullySensed())
+			canSee = false;
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "I don't see you!");
+			MyQueryRequest.Execute(EEnvQueryRunMode::SingleResult, this, &ABaseAIController::MyQueryFinished);
+		}
+		else {
+			canSee = true;
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "I see you!");
+		}
+
+	}
+	else if (target == NULL)
+	{
+		AMechRPGCharacter* mech = mAsMech(Actor);
+		if (mech != NULL) {
+			if (mech->GetRelationship(mAsMech(GetCharacter()), mech->GetGameInstance()) == ERelationshipType::Enemy)
 			{
-				const FVector targetLocation = mTargetActor()->GetActorLocation();
-				MyQueryRequest.Execute(EEnvQueryRunMode::SingleResult, this, &ABaseAIController::MyQueryFinished);
+				target = mech;
+				canSee = true;
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "I see you!");
 			}
 		}
 	}
@@ -90,19 +90,7 @@ void ABaseAIController::Tick(float DeltaTime)
 		const UWeapon* weapon = mCurrentWeapon();
 		bool abilityUsed = false;
 
-		LookAt(targetLocation);
-
-		TArray<FHitResult> hits = CheckLoSToTarget();
-
-		bool canSee = true;
-
-		for (FHitResult hit : hits) {
-			if (!hit.GetActor()->Implements<UDamagable>()) {
-				MyQueryRequest.Execute(EEnvQueryRunMode::SingleResult, this, &ABaseAIController::MyQueryFinished);
-				canSee = false;
-				break;
-			}
-		}
+		LookAt(targetLocation);		
 
 		if (canSee) {
 			for (UBaseAbility* ability : mAsMech(GetCharacter())->GetAbilities())
@@ -115,17 +103,20 @@ void ABaseAIController::Tick(float DeltaTime)
 			}
 
 			if (!abilityUsed && weapon != NULL) {
-
-				if (FVector::Dist(mActorLocation, targetLocation) <= weapon->GetWeaponData().range) {
-					StopMovement();
+				if (FVector::Dist(mActorLocation, targetLocation) <= weapon->GetWeaponData().range) {					
 					FireShot(mActorRotation.Vector());
 				}
 				else
 				{
+					lastKnowLocation = mAsMech(target)->GetActorLocation();
 					MyQueryRequest.Execute(EEnvQueryRunMode::SingleResult, this, &ABaseAIController::MyQueryFinished);
-
 				}
 			}
+		}
+		else if(!GetCharacter()->GetCharacterMovement()->IsMovementInProgress())
+		{
+			lastKnowLocation = mAsMech(target)->GetActorLocation();
+			MyQueryRequest.Execute(EEnvQueryRunMode::SingleResult, this, &ABaseAIController::MyQueryFinished);			
 		}
 	}
 }
@@ -139,24 +130,11 @@ TArray<FHitResult> ABaseAIController::CheckLoSToTarget() {
 	TArray<FHitResult> hits;
 	const FVector start = mActorLocation;
 	const FVector end = targetA->GetActorLocation();
-	const float radius = targetA->GetCapsuleComponent()->GetScaledCapsuleRadius() * 0.7;
+	const float radius = targetA->GetCapsuleComponent()->GetScaledCapsuleRadius() * 0.7;	
 
-	//mSphereTraceMulti(start, end, radius, ignore, hits, true);
-
-	UKismetSystemLibrary::SphereTraceMulti(GetWorld(), start, end, radius, ETraceTypeQuery::TraceTypeQuery1, false, ignore, EDrawDebugTrace::ForOneFrame, hits, true);
+	UKismetSystemLibrary::SphereTraceMulti(GetWorld(), start, end, radius, ETraceTypeQuery::TraceTypeQuery1, false, ignore, EDrawDebugTrace::None, hits, true);
 
 	return hits;
-}
-
-bool ABaseAIController::CanSee(AActor* other, FVector startLoc) {
-	//FHitResult hit = CheckLoSToTarget(startLoc, other->GetActorLocation());
-
-	//// Do we have line of sight to our target?
-	//if (hit.GetActor() == other)
-	//{
-	//	return true;
-	//}
-	return false;
 }
 
 void ABaseAIController::FireShot(FVector FireDirection)
@@ -182,10 +160,10 @@ void ABaseAIController::OnPossess(APawn* aPawn)
 	types.Add(EEventType::CombatState);
 	gameIn->GetEventManager()->RegisterListener(types, this);
 
-	constexpr float sightRange = 6000.0f;
+	int32 range = 3000;
 
-	sightConfig->SightRadius = sightRange;
-	sightConfig->LoseSightRadius = sightRange;
+	sightConfig->SightRadius = range * 0.9;
+	sightConfig->LoseSightRadius = range;
 	sightConfig->PeripheralVisionAngleDegrees = 90.0f;
 	sightConfig->DetectionByAffiliation.bDetectEnemies = true;
 	sightConfig->DetectionByAffiliation.bDetectFriendlies = true;
@@ -209,5 +187,17 @@ void ABaseAIController::EventTriggered(UBaseEvent* inEvent)
 
 			//UE_LOG(HealthChangeLog, Log, TEXT("Owner Took %f damage"), hce->GetChange().changeAmount);
 		}
+	}
+}
+
+void ABaseAIController::BeginPlay()
+{
+	Super::BeginPlay();	
+
+	UEnvQuery* playerLocationQuery = LoadObject<UEnvQuery>(this, TEXT("EnvQuery'/Game/TopDown/EQS_FindPlayer.EQS_FindPlayer'"));
+
+	if (playerLocationQuery != NULL)
+	{
+		MyQuery = playerLocationQuery;
 	}
 }

@@ -2,4 +2,4 @@
 1,1,Laser,500,720,1,TRUE
 2,2,Melee,500,30,1,FALSE
 3,3,Melee,500,30,1,FALSE
-4,4,Projectile,3000,30,0.1,FALSE
+4,4,Projectile,1000,30,0.1,FALSE

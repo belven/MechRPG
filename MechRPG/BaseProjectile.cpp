@@ -35,7 +35,7 @@ ABaseProjectile::ABaseProjectile()
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = false;
 	ProjectileMovement->ProjectileGravityScale = 0.f;
-	ProjectileMesh->SetWorldScale3D(FVector(0.4));
+	ProjectileMesh->SetWorldScale3D(FVector(0.2));
 	InitialLifeSpan = Default_Initial_Lifespan;
 }
 
