@@ -13,6 +13,7 @@
 #include "Items/ArmourCreator.h"
 #include "Items/WeaponCreator.h"
 #include "Kismet/GameplayStatics.h"
+#include "Perception/AIPerceptionSystem.h"
 
 ABaseCharacter::ABaseCharacter()
 {
@@ -74,6 +75,8 @@ void ABaseCharacter::ChangeHealth(FHealthChange& health_change)
 	if(IsDead())
 	{
 		SetActorHiddenInGame(true);
+		SetActorEnableCollision(false);
+		UAIPerceptionSystem::GetCurrent(this)->UnregisterSource(*this, NULL);
 	}
 
 	mEventTriggered(GetGameInstance(), mCreateHealthChangeEvent(this, health_change, false));

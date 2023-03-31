@@ -16,6 +16,7 @@ class UArmourCSVDataTable;
 class UArmourResistanceDataTable;
 class ULoadoutTableData;
 class UFactionManager;
+class APatrolPath;
 
 UCLASS()
 class MECHRPG_API URPGGameInstance : public UGameInstance
@@ -61,6 +62,8 @@ public:
 
 	static TArray<FString> CleanData(TArray<FString> strings);
 	template<class T> T* GetDataTable(T* value);
+
+	TArray<APatrolPath*> paths;
 private:
 	UPROPERTY()
 		URPGEventManager* eventManager;

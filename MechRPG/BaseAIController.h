@@ -14,6 +14,7 @@ class ABaseCharacter;
 class IDamagable;
 class UAISenseConfig_Sight;
 class UEnvQuery;
+class APatrolPath;
 
 UCLASS()
 class MECHRPG_API ABaseAIController : public AAIController, public IEventListener
@@ -25,9 +26,13 @@ public:
 	UFUNCTION()
 		void TargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
 	
-	void MyQueryFinished(TSharedPtr<FEnvQueryResult> Result);
+	void WeaponLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result);
+	void MoveToCombatLocation();
 
 	virtual void Tick(float DeltaTime) override;
+	void Patrol();
+	void KillAI();
+	void CalculateCombat();
 	void AttackLocation(FVector FireDirection);
 	void LookAt(FVector lookAtLocation);
 	virtual void OnPossess(APawn* aPawn) override;
@@ -55,4 +60,9 @@ private:
 
 	UPROPERTY()
 		FEnvQueryRequest FindViableCombatLocationRequest;
+
+	UPROPERTY()
+		 APatrolPath* currentPath;
+	
+	int32 currentPathPoint;
 };
