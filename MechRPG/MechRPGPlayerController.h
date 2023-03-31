@@ -42,6 +42,8 @@ protected:
 	void CalculateMovement(float DeltaSeconds);
 	void OnSetDestinationPressed();
 	void OnSetDestinationReleased();
+
+	AMechRPGCharacter* GetMech() { return mech; }
 private:
 	float MoveSpeed;
 	bool bMovementActive;
@@ -49,6 +51,9 @@ private:
 	float FiringTime;
 	bool isFiring;
 	FHitResult Hit;
+
+	UPROPERTY()
+		AMechRPGCharacter* mech;
 
 	UPROPERTY()
 		AMechRPGCharacter* mechTarget;

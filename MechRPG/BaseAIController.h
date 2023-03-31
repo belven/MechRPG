@@ -36,6 +36,8 @@ public:
 	FVector GetLastKnowLocation() { return lastKnowLocation;  }
 
 	IDamagable* GetTarget() { return  target; }
+
+	AMechRPGCharacter* GetMech() { return mech; }
 private:
 	IDamagable* target;
 	FVector lastKnowLocation;
@@ -43,6 +45,9 @@ private:
 
 	UPROPERTY()
 		UAISenseConfig_Sight* sightConfig;
+	
+	UPROPERTY()
+		AMechRPGCharacter* mech;
 
 	UPROPERTY()
 		UEnvQuery* FindWeaponLocationQuery;

@@ -46,7 +46,7 @@ void UEnvQueryTest_WeaponLoS::RunTest(FEnvQueryInstance& QueryInstance) const
 	FVector targetLocation = ContextLocations[0];
 
 	// Get our AIs character, so we can get weapon range
-	AMechRPGCharacter* mech = mAsMech(con->GetCharacter());
+	AMechRPGCharacter* controllerMech = con->GetMech();
 
 	// Set up the ignore for the line trace
 	TArray<AActor*> ignore;
@@ -60,9 +60,9 @@ void UEnvQueryTest_WeaponLoS::RunTest(FEnvQueryInstance& QueryInstance) const
 		FVector ItemLocation = GetItemLocation(QueryInstance, It.GetIndex());
 
 		// Check we have a weapon Equipped, this should always be the case
-		if (mech->GetEquippedWeapon() != NULL) {
+		if (controllerMech->GetEquippedWeapon() != NULL) {
 			float dist = FVector::Dist(targetLocation, ItemLocation);
-			float range = mech->GetEquippedWeapon()->GetWeaponData().range;
+			float range = controllerMech->GetEquippedWeapon()->GetWeaponData().range;
 			bool inRange = dist < range;
 
 			// Check if the Item Location and our target location are within range of each other
@@ -71,10 +71,10 @@ void UEnvQueryTest_WeaponLoS::RunTest(FEnvQueryInstance& QueryInstance) const
 				TArray<FHitResult> hits;
 
 				// Add some height to Sphere trace, otherwise it will collide with objects on the ground
-				ItemLocation.Z += mech->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+				ItemLocation.Z += controllerMech->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
 
 				// Create a sphere trace, slightly larger than the characters capsule, so we make sure there's enough room to shoot
-				mSphereTraceMulti(ItemLocation, targetLocation, mAsMech(con->GetTarget())->GetCapsuleComponent()->GetScaledCapsuleRadius()* 1.5, hits);
+				mSphereTraceMulti(ItemLocation, targetLocation, con->GetCharacter()->GetCapsuleComponent()->GetScaledCapsuleRadius()* 1.5, hits);
 
 				bool canSee = true;
 
@@ -101,7 +101,7 @@ void UEnvQueryTest_WeaponLoS::RunTest(FEnvQueryInstance& QueryInstance) const
 				{
 					// Create a score where closer locations to our AIs current location, are more valuable
 					// This stops the AI going to the first location in the list, as sometimes it moves miles away to a valid location, even when there's one right next to it
-					float score = 1 - (FVector::Dist(mech->GetActorLocation(), ItemLocation) / range);
+					float score = 1 - (FVector::Dist(controllerMech->GetActorLocation(), ItemLocation) / range);
 
 					// Set the location as passed with a score
 					It.ForceItemState(EEnvItemStatus::Passed, score);

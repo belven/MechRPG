@@ -1,5 +1,4 @@
 #include "BaseAIController.h"
-
 #include "BaseProjectile.h"
 #include "Kismet/GameplayStatics.h"
 #include "RPGGameInstance.h"
@@ -9,7 +8,6 @@
 #include "MechRPGCharacter.h"
 #include "Damagable.h"
 #include "Abilities/BaseAbility.h"
-#include "Components/CapsuleComponent.h"
 #include "EnvironmentQuery/EnvQuery.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -19,8 +17,8 @@
 
 #define mActorLocation GetCharacter()->GetActorLocation()
 #define mActorRotation GetCharacter()->GetActorRotation()
-#define mTargetActor() Cast<AActor>(target)
-#define mCurrentWeapon() mAsMech(GetCharacter())->GetEquippedWeapon()
+//#define mTargetActor() target.asActor()
+#define mCurrentWeapon() GetMech()->GetEquippedWeapon()
 #define mSphereTraceMulti(start, end, radius, ignore, hits) UKismetSystemLibrary::SphereTraceMulti(GetWorld(), start, end, radius, ETraceTypeQuery::TraceTypeQuery1, false, ignore, EDrawDebugTrace::ForOneFrame, hits,true)
 
 ABaseAIController::ABaseAIController() : Super()
@@ -71,16 +69,16 @@ void ABaseAIController::TargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimu
 	// If we don't have a target, then check if this is a new viable target
 	else if (target == NULL)
 	{
-		// We're currently assuming the target is a Mech, however this might not be the case in the future
-		AMechRPGCharacter* mech = mAsMech(Actor);
+		// Get the Actors team, if it has one, and check if we're enemies
+		ITeam* otherTeam = Cast<ITeam>(Actor);
 
-		if (mech != NULL) {
+		if (otherTeam != NULL) {
 
 			// Are we enemies with the perceived actor?
-			if (mech->GetRelationship(mAsMech(GetCharacter()), mech->GetGameInstance()) == ERelationshipType::Enemy)
+			if (mech->GetRelationship(otherTeam, mech->GetGameInstance()) == ERelationshipType::Enemy)
 			{
-				// Update our target and set that we can see them
-				target = mech;
+				// Update our target and set that we can see them, we can assume that, if the actor is a team, it's also damagable
+				target = Cast<IDamagable>(Actor);
 				canSee = true;
 
 				//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "I see you!");
@@ -108,7 +106,7 @@ void ABaseAIController::Tick(float DeltaTime)
 
 	if (target != NULL)
 	{
-		const FVector targetLocation = mTargetActor()->GetActorLocation();
+		const FVector targetLocation = target->asActor()->GetActorLocation();
 		const UWeapon* weapon = mCurrentWeapon();
 		bool abilityUsed = false;
 
@@ -118,7 +116,7 @@ void ABaseAIController::Tick(float DeltaTime)
 		if (canSee) {
 
 			// Check for any abilities we can use
-			for (UBaseAbility* ability : mAsMech(GetCharacter())->GetAbilities())
+			for (UBaseAbility* ability : mech->GetAbilities())
 			{
 				if (!ability->IsOnCooldown())
 				{
@@ -139,7 +137,7 @@ void ABaseAIController::Tick(float DeltaTime)
 				else
 				{
 					// We updated the lastKnowLocation here, as we can still see the target and simply need to move forwards to attack again
-					lastKnowLocation = mAsMech(target)->GetActorLocation();
+					lastKnowLocation = target->asActor()->GetActorLocation();
 					FindViableCombatLocationRequest.Execute(EEnvQueryRunMode::SingleResult, this, &ABaseAIController::MyQueryFinished);
 				}
 			}
@@ -148,7 +146,7 @@ void ABaseAIController::Tick(float DeltaTime)
 		else if (!GetCharacter()->GetCharacterMovement()->IsMovementInProgress())
 		{
 			// Move to the last known location
-			lastKnowLocation = mAsMech(target)->GetActorLocation();
+			lastKnowLocation = target->asActor()->GetActorLocation();
 			FindViableCombatLocationRequest.Execute(EEnvQueryRunMode::SingleResult, this, &ABaseAIController::MyQueryFinished);
 		}
 	}
@@ -170,6 +168,7 @@ void ABaseAIController::LookAt(FVector lookAtLocation)
 void ABaseAIController::OnPossess(APawn* aPawn)
 {
 	Super::OnPossess(aPawn);
+	mech = mAsMech(aPawn);
 
 	URPGGameInstance* gameIn = GameInstance(GetWorld());
 	TArray<EEventType> types;
@@ -177,7 +176,7 @@ void ABaseAIController::OnPossess(APawn* aPawn)
 	types.Add(EEventType::CombatState);
 	gameIn->GetEventManager()->RegisterListener(types, this);
 
-	int32 range = 3000;
+	constexpr int32 range = 3000;
 
 	// Set up sight config for AI perception
 	sightConfig->SightRadius = range * 0.9;

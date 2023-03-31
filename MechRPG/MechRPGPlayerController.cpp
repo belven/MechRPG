@@ -9,13 +9,11 @@
 #include "Events/CombatStateEvent.h"
 #include "Events/HealthChangeEvent.h"
 #include "Events/RPGEventManager.h"
-#include "Items/Armour.h"
 #include "Items/ArmourCreator.h"
 #include "Items/Weapon.h"
 #include "Items/WeaponCreator.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
-#include "MechRPG/RPGGameInstance.h"
 
 #define mActorLocation GetCharacter()->GetActorLocation()
 #define mActorRotation GetCharacter()->GetActorRotation()
@@ -50,14 +48,15 @@ void AMechRPGPlayerController::EventTriggered(UBaseEvent* inEvent)
 void AMechRPGPlayerController::OnPossess(APawn* aPawn)
 {
 	Super::OnPossess(aPawn);
-	
+	mech = mAsMech(aPawn);
+
 	URPGGameInstance* gameIn = GameInstance(GetWorld());
 	TArray<EEventType> types;
 	types.Add(EEventType::HealthChange);
 	types.Add(EEventType::CombatState);
 	gameIn->GetEventManager()->RegisterListener(types, this);
 
-	mAsMech(GetCharacter())->SetFaction(EFaction::Synths);
+	mech->SetFaction(EFaction::Synths);
 }
 
 void AMechRPGPlayerController::PlayerTick(float DeltaTime)
@@ -116,7 +115,7 @@ void AMechRPGPlayerController::LookAt(FVector lookAtLocation)
 
 void AMechRPGPlayerController::FireShot(FVector FireDirection)
 {
-	mAsMech(GetCharacter())->GetEquippedWeapon()->UseWeapon(FireDirection);
+	mech->GetEquippedWeapon()->UseWeapon(FireDirection);
 }
 
 void AMechRPGPlayerController::SetupInputComponent()

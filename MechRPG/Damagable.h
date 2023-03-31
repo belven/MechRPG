@@ -19,4 +19,14 @@ public:
 	virtual float GetMaxHealth();
 	bool IsAlive() { return !IsDead(); };
 	virtual bool IsDead();
+
+	AActor* asActor()
+	{
+		return Cast<AActor>(this);		
+	}
+
+	operator AActor*() 
+	{
+		return Cast<AActor>(this);
+	}
 };
