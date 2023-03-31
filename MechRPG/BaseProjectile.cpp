@@ -11,7 +11,7 @@ ABaseProjectile::ABaseProjectile()
 	PrimaryActorTick.bCanEverTick = true;
 
 	CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
-	CollisionComp->InitSphereRadius(50.0f);
+	CollisionComp->InitSphereRadius(10.0f);
 	CollisionComp->BodyInstance.SetCollisionProfileName("Projectile");
 	CollisionComp->OnComponentHit.AddDynamic(this, &ABaseProjectile::OnHit);
 	CollisionComp->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
@@ -26,6 +26,7 @@ ABaseProjectile::ABaseProjectile()
 	ProjectileMesh->SetupAttachment(RootComponent);
 	ProjectileMesh->CastShadow = false;
 	ProjectileMesh->SetWorldScale3D(FVector(0.05));
+	ProjectileMesh->SetWorldScale3D(FVector(0.2));
 	ProjectileMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement0"));
@@ -35,7 +36,6 @@ ABaseProjectile::ABaseProjectile()
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = false;
 	ProjectileMovement->ProjectileGravityScale = 0.f;
-	ProjectileMesh->SetWorldScale3D(FVector(0.2));
 	InitialLifeSpan = Default_Initial_Lifespan;
 }
 
