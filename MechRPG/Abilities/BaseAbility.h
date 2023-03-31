@@ -20,8 +20,8 @@ public:
 	void CooldownEnded();
 	bool IsOnCooldown() { return onCooldown;  }
 
-	AMechRPGCharacter* GetOwner() { return owner; }
-	void SetOwner(AMechRPGCharacter* inOwner) { owner = inOwner; }
+	ABaseCharacter* GetOwner() { return owner; }
+	void SetOwner(ABaseCharacter* inOwner) { owner = inOwner; }
 
 protected:
 	FTimerHandle TimerHandle_AbilityAvailable;
@@ -29,5 +29,5 @@ protected:
 	bool onCooldown;
 
 	UPROPERTY()
-	AMechRPGCharacter* owner;
+	ABaseCharacter* owner;
 };

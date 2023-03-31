@@ -1,6 +1,6 @@
 #include "EnvQueryTest_WeaponLoS.h"
 #include "../BaseAIController.h"
-#include "../MechRPGCharacter.h"
+#include "../BaseCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "EnvironmentQuery/Items/EnvQueryItemType_VectorBase.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -46,7 +46,7 @@ void UEnvQueryTest_WeaponLoS::RunTest(FEnvQueryInstance& QueryInstance) const
 	FVector targetLocation = ContextLocations[0];
 
 	// Get our AIs character, so we can get weapon range
-	AMechRPGCharacter* controllerMech = con->GetMech();
+	ABaseCharacter* controllerMech = con->GetBaseCharacter();
 
 	// Set up the ignore for the line trace
 	TArray<AActor*> ignore;

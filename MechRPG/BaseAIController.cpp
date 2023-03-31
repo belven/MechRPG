@@ -5,7 +5,7 @@
 #include "Events/BaseEvent.h"
 #include "Events/HealthChangeEvent.h"
 #include "Events/RPGEventManager.h"
-#include "MechRPGCharacter.h"
+#include "BaseCharacter.h"
 #include "Damagable.h"
 #include "Abilities/BaseAbility.h"
 #include "EnvironmentQuery/EnvQuery.h"
@@ -18,7 +18,7 @@
 #define mActorLocation GetCharacter()->GetActorLocation()
 #define mActorRotation GetCharacter()->GetActorRotation()
 //#define mTargetActor() target.asActor()
-#define mCurrentWeapon() GetMech()->GetEquippedWeapon()
+#define mCurrentWeapon() GetBaseCharacter()->GetEquippedWeapon()
 #define mSphereTraceMulti(start, end, radius, ignore, hits) UKismetSystemLibrary::SphereTraceMulti(GetWorld(), start, end, radius, ETraceTypeQuery::TraceTypeQuery1, false, ignore, EDrawDebugTrace::ForOneFrame, hits,true)
 
 ABaseAIController::ABaseAIController() : Super()
@@ -75,7 +75,7 @@ void ABaseAIController::TargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimu
 		if (otherTeam != NULL) {
 
 			// Are we enemies with the perceived actor?
-			if (mech->GetRelationship(otherTeam, mech->GetGameInstance()) == ERelationshipType::Enemy)
+			if (baseCharacter->GetRelationship(otherTeam, baseCharacter->GetGameInstance()) == ERelationshipType::Enemy)
 			{
 				// Update our target and set that we can see them, we can assume that, if the actor is a team, it's also damagable
 				target = Cast<IDamagable>(Actor);
@@ -116,7 +116,7 @@ void ABaseAIController::Tick(float DeltaTime)
 		if (canSee) {
 
 			// Check for any abilities we can use
-			for (UBaseAbility* ability : mech->GetAbilities())
+			for (UBaseAbility* ability : baseCharacter->GetAbilities())
 			{
 				if (!ability->IsOnCooldown())
 				{
@@ -168,7 +168,7 @@ void ABaseAIController::LookAt(FVector lookAtLocation)
 void ABaseAIController::OnPossess(APawn* aPawn)
 {
 	Super::OnPossess(aPawn);
-	mech = mAsMech(aPawn);
+	baseCharacter = mAsBaseCharacter(aPawn);
 
 	URPGGameInstance* gameIn = GameInstance(GetWorld());
 	TArray<EEventType> types;

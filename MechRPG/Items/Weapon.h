@@ -8,7 +8,7 @@
 #define mSetTimer(handle, method, delay) GetWorld()->GetTimerManager().SetTimer(handle, this, method, delay)
 #define mSetTimerWorld(world, handle, method, delay) world->GetTimerManager().SetTimer(handle, this, method, delay)
 
-class AMechRPGCharacter;
+class ABaseCharacter;
 class ABaseProjectile;
 
 UCLASS()
@@ -22,8 +22,8 @@ public:
 	void SetWeaponData(FWeaponData data) { weaponData = data; }
 	virtual void UseWeapon(const FVector& LookAtRotation);
 	
-	AMechRPGCharacter* GetOwner() const { return owner; }
-	void SetOwner(AMechRPGCharacter* val) { owner = val; }
+	ABaseCharacter* GetOwner() const { return owner; }
+	void SetOwner(ABaseCharacter* val) { owner = val; }
 
 	void ShotTimerExpired();
 protected:
@@ -33,7 +33,7 @@ protected:
 	FTimerHandle TimerHandle_ShotTimerExpired;
 
 	UPROPERTY()
-	AMechRPGCharacter* owner;
+	ABaseCharacter* owner;
 
 	ABaseProjectile* SpawnProjectile(FVector gunLocation, FRotator FireRotation, UClass* projectileClass);
 };

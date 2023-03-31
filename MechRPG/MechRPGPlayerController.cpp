@@ -4,7 +4,7 @@
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
-#include "MechRPGCharacter.h"
+#include "BaseCharacter.h"
 #include "RPGGameInstance.h"
 #include "Events/CombatStateEvent.h"
 #include "Events/HealthChangeEvent.h"
@@ -17,7 +17,7 @@
 
 #define mActorLocation GetCharacter()->GetActorLocation()
 #define mActorRotation GetCharacter()->GetActorRotation()
-#define mAsMech(character) Cast<AMechRPGCharacter>(character)
+#define mAsBaseCharacter(character) Cast<ABaseCharacter>(character)
 
 const FName AMechRPGPlayerController::MoveForwardBinding("MoveForward");
 const FName AMechRPGPlayerController::MoveRightBinding("MoveRight");
@@ -48,7 +48,7 @@ void AMechRPGPlayerController::EventTriggered(UBaseEvent* inEvent)
 void AMechRPGPlayerController::OnPossess(APawn* aPawn)
 {
 	Super::OnPossess(aPawn);
-	mech = mAsMech(aPawn);
+	mech = mAsBaseCharacter(aPawn);
 
 	URPGGameInstance* gameIn = GameInstance(GetWorld());
 	TArray<EEventType> types;
@@ -85,18 +85,18 @@ void AMechRPGPlayerController::PlayerTick(float DeltaTime)
 		FiringTime += DeltaTime;
 
 		if (FiringTime > ShortPressThreshold) {
-			if (mechTarget != NULL)
+			if (target != NULL)
 			{
-				mechTarget = NULL;
+				target = NULL;
 			}
 
 			LookAt(Hit.ImpactPoint);
 			FireShot(mActorRotation.Vector());
 		}
 	}
-	else if (mechTarget != NULL)
+	else if (target != NULL)
 	{
-		LookAt(mechTarget->GetActorLocation());
+		LookAt(target->GetActorLocation());
 		FireShot(mActorRotation.Vector());
 	}
 	else
@@ -146,10 +146,10 @@ void AMechRPGPlayerController::StopFiring()
 	{
 		FHitResult HitPawn;
 		GetHitResultUnderCursor(ECC_Pawn, false, HitPawn);
-		AMechRPGCharacter* mech = Cast<AMechRPGCharacter>(HitPawn.GetActor());
+		ABaseCharacter* targetFound = Cast<ABaseCharacter>(HitPawn.GetActor());
 
-		if (mech != NULL) {
-			mechTarget = mech;
+		if (targetFound != NULL) {
+			target = targetFound;
 		}
 	}
 }

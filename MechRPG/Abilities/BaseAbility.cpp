@@ -1,5 +1,5 @@
 #include "BaseAbility.h"
-#include "MechRPG/MechRPGCharacter.h"
+#include "MechRPG/BaseCharacter.h"
 
 UBaseAbility::UBaseAbility() : Super()
 {

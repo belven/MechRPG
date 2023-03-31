@@ -2,7 +2,7 @@
 
 #include "MechRPGGameMode.h"
 #include "MechRPGPlayerController.h"
-#include "MechRPGCharacter.h"
+#include "BaseCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
 AMechRPGGameMode::AMechRPGGameMode()

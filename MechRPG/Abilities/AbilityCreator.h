@@ -9,6 +9,6 @@ class MECHRPG_API UAbilityCreator : public UObject
 {
 	GENERATED_BODY()
 public:
-		static UBaseAbility* CreateAbility(const int32 abilityID, const UWorld* world, AMechRPGCharacter* owner);
+		static UBaseAbility* CreateAbility(const int32 abilityID, const UWorld* world, ABaseCharacter* owner);
 
 };

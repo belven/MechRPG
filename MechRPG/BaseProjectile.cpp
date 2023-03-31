@@ -1,5 +1,5 @@
 #include "BaseProjectile.h"
-#include "MechRPGCharacter.h"
+#include "BaseCharacter.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
@@ -41,7 +41,7 @@ ABaseProjectile::ABaseProjectile()
 
 void ABaseProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	AMechRPGCharacter* us = healthChange.source;
+	ABaseCharacter* us = healthChange.source;
 
 	if (OtherActor != NULL && OtherActor != this && OtherActor != us)
 	{

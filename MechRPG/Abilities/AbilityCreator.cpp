@@ -3,7 +3,7 @@
 #include "MechRPG/RPGGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 
-UBaseAbility* UAbilityCreator::CreateAbility(const int32 abilityID, const UWorld* world, AMechRPGCharacter* owner)
+UBaseAbility* UAbilityCreator::CreateAbility(const int32 abilityID, const UWorld* world, ABaseCharacter* owner)
 {
 	UBaseAbility* ability = nullptr;
 	URPGGameInstance* gameIn = GameInstance(world);

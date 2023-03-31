@@ -8,9 +8,9 @@
 #include "BaseAIController.generated.h"
 
 #define GameInstance(world) Cast<URPGGameInstance>(UGameplayStatics::GetGameInstance(world))
-#define mAsMech(character) Cast<AMechRPGCharacter>(character)
+#define mAsBaseCharacter(character) Cast<ABaseCharacter>(character)
 
-class AMechRPGCharacter;
+class ABaseCharacter;
 class IDamagable;
 class UAISenseConfig_Sight;
 class UEnvQuery;
@@ -37,7 +37,7 @@ public:
 
 	IDamagable* GetTarget() { return  target; }
 
-	AMechRPGCharacter* GetMech() { return mech; }
+	ABaseCharacter* GetBaseCharacter() { return baseCharacter; }
 private:
 	IDamagable* target;
 	FVector lastKnowLocation;
@@ -47,7 +47,7 @@ private:
 		UAISenseConfig_Sight* sightConfig;
 	
 	UPROPERTY()
-		AMechRPGCharacter* mech;
+		ABaseCharacter* baseCharacter;
 
 	UPROPERTY()
 		UEnvQuery* FindWeaponLocationQuery;

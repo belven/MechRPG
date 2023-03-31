@@ -1,6 +1,6 @@
 #pragma once
 #include "CoreMinimal.h"
-#include "MechRPGCharacter.h"
+#include "BaseCharacter.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/Actor.h"
 #include "BaseProjectile.generated.h"

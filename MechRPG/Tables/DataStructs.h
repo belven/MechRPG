@@ -3,7 +3,7 @@
 #include "UObject/NoExportTypes.h"
 #include "DataStructs.generated.h"
 
-class AMechRPGCharacter;
+class ABaseCharacter;
 UENUM(BlueprintType)
 enum class  EWeaponType : uint8 {
 	Laser,
@@ -70,7 +70,7 @@ public:
 	EDamageType damageType;
 
 	UPROPERTY()
-		AMechRPGCharacter* source;
+		ABaseCharacter* source;
 };
 
 USTRUCT(BlueprintType)

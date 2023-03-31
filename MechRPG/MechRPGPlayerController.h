@@ -4,7 +4,7 @@
 #include "GameFramework/PlayerController.h"
 #include "MechRPGPlayerController.generated.h"
 
-class AMechRPGCharacter;
+class ABaseCharacter;
 class UNiagaraSystem;
 
 UCLASS()
@@ -43,7 +43,7 @@ protected:
 	void OnSetDestinationPressed();
 	void OnSetDestinationReleased();
 
-	AMechRPGCharacter* GetMech() { return mech; }
+	ABaseCharacter* GetMech() { return mech; }
 private:
 	float MoveSpeed;
 	bool bMovementActive;
@@ -53,8 +53,8 @@ private:
 	FHitResult Hit;
 
 	UPROPERTY()
-		AMechRPGCharacter* mech;
+		ABaseCharacter* mech;
 
 	UPROPERTY()
-		AMechRPGCharacter* mechTarget;
+		ABaseCharacter* target;
 };

@@ -1,4 +1,4 @@
-#include "MechRPGCharacter.h"
+#include "BaseCharacter.h"
 #include "RPGGameInstance.h"
 #include "Abilities/AbilityCreator.h"
 #include "Camera/CameraComponent.h"
@@ -14,7 +14,7 @@
 #include "Items/WeaponCreator.h"
 #include "Kismet/GameplayStatics.h"
 
-AMechRPGCharacter::AMechRPGCharacter()
+ABaseCharacter::ABaseCharacter()
 {
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
@@ -47,7 +47,7 @@ AMechRPGCharacter::AMechRPGCharacter()
 	faction = EFaction::Bandits;
 }
 
-void AMechRPGCharacter::ChangeHealth(FHealthChange& health_change)
+void ABaseCharacter::ChangeHealth(FHealthChange& health_change)
 {
 	mEventTriggered(GetGameInstance(), mCreateHealthChangeEvent(this, health_change, true));
 
@@ -74,13 +74,13 @@ void AMechRPGCharacter::ChangeHealth(FHealthChange& health_change)
 	mEventTriggered(GetGameInstance(), mCreateHealthChangeEvent(this, health_change, false));
 }
 
-float  AMechRPGCharacter::GetDamageAfterResistance(float damage, EDamageType type) {
+float  ABaseCharacter::GetDamageAfterResistance(float damage, EDamageType type) {
 	const float resistance = 100.0f + GetDamageResistance(type);
 	const float damageReduction = 100.0f / resistance;
 	return damage * damageReduction;
 }
 
-int32  AMechRPGCharacter::GetDamageResistance(EDamageType type) {
+int32  ABaseCharacter::GetDamageResistance(EDamageType type) {
 	int32 total = 0;
 
 	TArray<UArmour*> armour;
@@ -97,19 +97,19 @@ int32  AMechRPGCharacter::GetDamageResistance(EDamageType type) {
 	return total;
 }
 
-URPGGameInstance* AMechRPGCharacter::GetGameInstance()
+URPGGameInstance* ABaseCharacter::GetGameInstance()
 {
 	if (gameInstance == NULL)
 		gameInstance = GameInstance(GetWorld());
 	return gameInstance;
 }
 
-void AMechRPGCharacter::EquipArmour(UArmour* armour)
+void ABaseCharacter::EquipArmour(UArmour* armour)
 {
 	equippedArmour.FindOrAdd(armour->GetData().slot, armour);
 }
 
-void AMechRPGCharacter::BeginPlay()
+void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	

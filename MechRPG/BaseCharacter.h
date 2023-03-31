@@ -4,7 +4,7 @@
 #include "Team.h"
 #include "GameFramework/Character.h"
 #include "Items/Weapon.h"
-#include "MechRPGCharacter.generated.h"
+#include "BaseCharacter.generated.h"
 
 class URPGGameInstance;
 class UWeapon;
@@ -21,12 +21,12 @@ public:
 };
 
 UCLASS(Blueprintable)
-class AMechRPGCharacter : public ACharacter, public IDamagable, public ITeam
+class ABaseCharacter : public ACharacter, public IDamagable, public ITeam
 {
 	GENERATED_BODY()
 
 public:
-	AMechRPGCharacter();
+	ABaseCharacter();
 
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
