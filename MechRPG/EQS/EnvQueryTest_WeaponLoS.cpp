@@ -19,8 +19,7 @@ UEnvQueryTest_WeaponLoS::UEnvQueryTest_WeaponLoS(const FObjectInitializer& Objec
 	// We want to do both, as we need to filter out of range and out of line of sight items but also score in range and in line of sight items higher, the closer they are to our current location
 	TestPurpose = EEnvTestPurpose::FilterAndScore;
 
-	// Scores that are lower are now considered better here
-	// Currently I'm making lower scores better with my calculation, though I should inverse it in my calculation, as it makes more sense
+	// Scores that are higher considered better
 	ScoringEquation = EEnvTestScoreEquation::Linear;
 }
 
