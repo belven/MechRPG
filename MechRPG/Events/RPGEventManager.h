@@ -6,13 +6,14 @@
 #include "RPGEventManager.generated.h"
 
 #define mEventTriggered(GameInstance, baseEvent)  GameInstance->GetEventManager()->EventTriggered(baseEvent)
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEventTriggered, UBaseEvent*, eventTriggered);
 
 USTRUCT(BlueprintType)
-struct FListeners 
+struct FListeners
 {
 	GENERATED_USTRUCT_BODY()
 public:
-		TArray<IEventListener*>  listeners;
+	TArray<IEventListener*>  listeners;
 };
 
 UCLASS()
@@ -21,11 +22,14 @@ class MECHRPG_API URPGEventManager : public UObject
 	GENERATED_BODY()
 
 public:
-		TMap<EEventType, FListeners>& GetManagerListeners()  { return ManagerListeners; }
+	TMap<EEventType, FListeners>& GetManagerListeners() { return ManagerListeners; }
 
-		void RegisterListener(TArray<EEventType> types, IEventListener* listener);
-		void EventTriggered(UBaseEvent* inEvent);
+	void RegisterListener(TArray<EEventType> types, IEventListener* listener);
+	void EventTriggered(UBaseEvent* inEvent);
+
+	UPROPERTY()
+		FEventTriggered OnEventTriggered;
 private:
-	TMap<EEventType, FListeners> ManagerListeners;
-	
+	UPROPERTY()
+		TMap<EEventType, FListeners> ManagerListeners;
 };

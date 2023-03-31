@@ -5,7 +5,15 @@ UHealthChangeEvent* UHealthChangeEvent::CreateHealthChangeEvent(UObject* owner, 
 	UHealthChangeEvent* hce = NewObject<UHealthChangeEvent>();
 	hce->hc = hc;
 	hce->preHealthChange = preHealthChange;
-	hce->SetEventType(EEventType::HealthChange);
+
+	if (preHealthChange) {
+		hce->SetEventType(EEventType::PreHealthChange );
+	}
+	else
+	{
+		hce->SetEventType(EEventType::PostHealthChange);		
+	}
+
 	hce->SetEventOwner(owner);
 	return hce;
 }

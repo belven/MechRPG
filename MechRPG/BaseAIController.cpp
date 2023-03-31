@@ -103,6 +103,12 @@ void ABaseAIController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if(GetBaseCharacter() != NULL && GetBaseCharacter()->IsDead())
+	{
+		StopMovement();
+		SetActorTickEnabled(false);
+	}
+
 	if (target != NULL)
 	{
 		const FVector targetLocation = target->asActor()->GetActorLocation();
@@ -170,11 +176,11 @@ void ABaseAIController::OnPossess(APawn* aPawn)
 	AICharacter = mAsBaseCharacter(aPawn);
 
 	URPGGameInstance* gameIn = GameInstance(GetWorld());
-	TArray<EEventType> types;
-	types.Add(EEventType::HealthChange);
-	types.Add(EEventType::CombatState);
-	gameIn->GetEventManager()->RegisterListener(types, this);
-
+	//TArray<EEventType> types;
+	//types.Add(EEventType::PostHealthChange);
+	//types.Add(EEventType::CombatState);
+	//gameIn->GetEventManager()->RegisterListener(types, this);
+	gameIn->GetEventManager()->OnEventTriggered.AddUniqueDynamic(this, &ABaseAIController::EventTriggered);
 	constexpr int32 range = 3000;
 
 	// Set up sight config for AI perception
@@ -196,17 +202,55 @@ void ABaseAIController::OnPossess(APawn* aPawn)
 	FindViableCombatLocationRequest = FEnvQueryRequest(FindWeaponLocationQuery, this);
 }
 
+void ABaseAIController::FindNewTarget()
+{
+	TArray<AActor*> actorsSensed;
+	PerceptionComponent.Get()->GetKnownPerceivedActors(sightConfig->GetSenseImplementation(), actorsSensed);
+
+	for(AActor* actor : actorsSensed)
+	{
+		if(actor->Implements<UTeam>())
+		{
+			ITeam* team = Cast<ITeam>(actor);
+			IDamagable* damagable = Cast<IDamagable>(actor);
+
+			if(damagable->IsAlive() 
+				&& AICharacter->GetRelationship(team, AICharacter->GetGameInstance()) == ERelationshipType::Enemy)
+			{
+				target = damagable;
+			}
+		}
+	}
+}
+
 void ABaseAIController::EventTriggered(UBaseEvent* inEvent)
 {
-	// Only change target if our current target is null or dead, and the event is of type health change
-	if ((target == NULL || target->IsDead()) && inEvent->GetEventType() == EEventType::HealthChange) {
+	// Check if the event is a post health change
+	if (inEvent->GetEventType() == EEventType::PostHealthChange) {
 		UHealthChangeEvent* hce = Cast<UHealthChangeEvent>(inEvent);
 
-		// Only trigger after health changed, the change isn't a heal and the owner of change is our Pawn
-		if (!hce->GetPreChange() && !hce->GetChange().heals && hce->GetEventOwner() == GetCharacter()) {
-			target = hce->GetChange().source;
+		// If our target is NULL, we can check if we're being attacked and maybe assign a new target
+		if (target == NULL) {
 
-			//UE_LOG(HealthChangeLog, Log, TEXT("Owner Took %f damage"), hce->GetChange().changeAmount);
+			// Only trigger after health changed, the change isn't a heal and the owner of change is our Pawn and if the source is alive still
+			// It's possible we take damage from a dead source
+			if (!hce->GetChange().heals && hce->GetEventOwner() == GetCharacter() && !hce->GetChange().source->IsDead()) {
+				target = hce->GetChange().source;				
+			}
+		}
+		// Check if the change is damage
+		// Check if the change is against our target
+		// Check if our target is dead
+		else if(!hce->GetChange().heals && hce->GetEventOwner() == *target && target->IsDead())
+		{
+			// Clear our Target
+			target = NULL;
+
+			// clear sight
+			canSee = false;
+
+			// Try to find a new target
+			FindNewTarget();
 		}
 	}
 }

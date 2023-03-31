@@ -14,7 +14,8 @@ class UEventListener : public UInterface
 class MECHRPG_API IEventListener
 {
 	GENERATED_BODY()
-		
+
 public:
-	virtual void EventTriggered(UBaseEvent* inEvent);
+	UFUNCTION()
+		virtual void EventTriggered(UBaseEvent* inEvent);
 };

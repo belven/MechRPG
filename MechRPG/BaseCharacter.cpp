@@ -71,6 +71,11 @@ void ABaseCharacter::ChangeHealth(FHealthChange& health_change)
 
 	FMath::Clamp(health_change.heals, 0, maxStats.health);
 
+	if(IsDead())
+	{
+		SetActorHiddenInGame(true);
+	}
+
 	mEventTriggered(GetGameInstance(), mCreateHealthChangeEvent(this, health_change, false));
 }
 
@@ -112,9 +117,13 @@ void ABaseCharacter::EquipArmour(UArmour* armour)
 void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	SetupLoadout();
+}
+
+void ABaseCharacter::SetupLoadout()
+{
 	const FLoadoutData ld = GetGameInstance()->GetLoadoutData(1);
-	
+
 	SetEquippedWeapon(UWeaponCreator::CreateWeapon(ld.weaponID, GetWorld()));
 
 	EquipArmour(UArmourCreator::CreateArmour(ld.headArmourID, GetWorld()));

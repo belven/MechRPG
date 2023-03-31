@@ -33,10 +33,9 @@ AMechRPGPlayerController::AMechRPGPlayerController()
 
 void AMechRPGPlayerController::EventTriggered(UBaseEvent* inEvent)
 {
-	if (inEvent->GetEventType() == EEventType::HealthChange) {
+	if (inEvent->GetEventType() == EEventType::PostHealthChange) {
 		UHealthChangeEvent* hce = Cast<UHealthChangeEvent>(inEvent);
-
-		if (!hce->GetPreChange())
+		
 			UE_LOG(HealthChangeLog, Log, TEXT("Owner Took %f damage"), hce->GetChange().changeAmount);
 	}
 	else if (inEvent->GetEventType() == EEventType::CombatState) {
@@ -52,7 +51,7 @@ void AMechRPGPlayerController::OnPossess(APawn* aPawn)
 
 	URPGGameInstance* gameIn = GameInstance(GetWorld());
 	TArray<EEventType> types;
-	types.Add(EEventType::HealthChange);
+	types.Add(EEventType::PostHealthChange);
 	types.Add(EEventType::CombatState);
 	gameIn->GetEventManager()->RegisterListener(types, this);
 

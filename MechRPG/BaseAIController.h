@@ -31,6 +31,7 @@ public:
 	void AttackLocation(FVector FireDirection);
 	void LookAt(FVector lookAtLocation);
 	virtual void OnPossess(APawn* aPawn) override;
+	void FindNewTarget();
 	virtual void EventTriggered(UBaseEvent* inEvent) override;
 
 	FVector GetLastKnowLocation() { return lastKnowLocation;  }

@@ -1,14 +1,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
 #include "BaseEvent.generated.h"
 
 class IEventListener;
 
 UENUM(BlueprintType)
 enum class  EEventType : uint8 {
-	HealthChange,
+	PreHealthChange,
+	PostHealthChange,
 	CombatState
 };
 

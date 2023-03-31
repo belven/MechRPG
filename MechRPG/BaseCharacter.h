@@ -34,6 +34,8 @@ public:
 	FORCEINLINE UWeapon* GetEquippedWeapon() { return equippedWeapon; }
 	FORCEINLINE void SetEquippedWeapon(UWeapon* weapon) { equippedWeapon = weapon; equippedWeapon->SetOwner(this); }
 
+	void SetupLoadout();
+
 	URPGGameInstance* GetGameInstance();
 	void EquipArmour(UArmour* armour);
 
@@ -48,11 +50,12 @@ public:
 	virtual float GetMaxHealth() override { return maxStats.health; }
 	virtual EFaction GetFaction() override { return faction; }
 	void SetFaction(EFaction inFaction) { faction = inFaction; }
+
 private:
 	UPROPERTY()
 		UWeapon* equippedWeapon;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Factions, meta = (AllowPrivateAccess = "true"))
 		EFaction faction;
 
 	UPROPERTY()
