@@ -75,7 +75,7 @@ void ABaseAIController::TargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimu
 		if (otherTeam != NULL) {
 
 			// Are we enemies with the perceived actor?
-			if (baseCharacter->GetRelationship(otherTeam, baseCharacter->GetGameInstance()) == ERelationshipType::Enemy)
+			if (AICharacter->GetRelationship(otherTeam, AICharacter->GetGameInstance()) == ERelationshipType::Enemy)
 			{
 				// Update our target and set that we can see them, we can assume that, if the actor is a team, it's also damagable
 				target = Cast<IDamagable>(Actor);
@@ -116,7 +116,7 @@ void ABaseAIController::Tick(float DeltaTime)
 		if (canSee) {
 
 			// Check for any abilities we can use
-			for (UBaseAbility* ability : baseCharacter->GetAbilities())
+			for (UBaseAbility* ability : AICharacter->GetAbilities())
 			{
 				if (!ability->IsOnCooldown())
 				{
@@ -168,7 +168,7 @@ void ABaseAIController::LookAt(FVector lookAtLocation)
 void ABaseAIController::OnPossess(APawn* aPawn)
 {
 	Super::OnPossess(aPawn);
-	baseCharacter = mAsBaseCharacter(aPawn);
+	AICharacter = mAsBaseCharacter(aPawn);
 
 	URPGGameInstance* gameIn = GameInstance(GetWorld());
 	TArray<EEventType> types;

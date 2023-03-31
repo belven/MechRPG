@@ -37,7 +37,7 @@ public:
 
 	IDamagable* GetTarget() { return  target; }
 
-	ABaseCharacter* GetBaseCharacter() { return baseCharacter; }
+	ABaseCharacter* GetBaseCharacter() { return AICharacter; }
 private:
 	IDamagable* target;
 	FVector lastKnowLocation;
@@ -47,7 +47,7 @@ private:
 		UAISenseConfig_Sight* sightConfig;
 	
 	UPROPERTY()
-		ABaseCharacter* baseCharacter;
+		ABaseCharacter* AICharacter;
 
 	UPROPERTY()
 		UEnvQuery* FindWeaponLocationQuery;
