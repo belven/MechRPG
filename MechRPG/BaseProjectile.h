@@ -15,11 +15,12 @@ class MECHRPG_API ABaseProjectile : public AActor
 public:
 	ABaseProjectile();
 
+	UFUNCTION()
+		void BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+			int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
 	static const float Default_Initial_Speed;
 	static const float Default_Initial_Lifespan;
-
-	UFUNCTION()
-		virtual void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 	void SetHealthChange(FHealthChange inHealthChange);
 

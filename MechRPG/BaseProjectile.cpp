@@ -13,7 +13,7 @@ ABaseProjectile::ABaseProjectile()
 	CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
 	CollisionComp->InitSphereRadius(10.0f);
 	CollisionComp->BodyInstance.SetCollisionProfileName("Projectile");
-	CollisionComp->OnComponentHit.AddDynamic(this, &ABaseProjectile::OnHit);
+	CollisionComp->OnComponentBeginOverlap.AddDynamic(this, &ABaseProjectile::BeginOverlap);
 	CollisionComp->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
 	CollisionComp->CanCharacterStepUpOn = ECB_No;
 
@@ -39,11 +39,11 @@ ABaseProjectile::ABaseProjectile()
 	InitialLifeSpan = Default_Initial_Lifespan;
 }
 
-void ABaseProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+void ABaseProjectile::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	ABaseCharacter* us = healthChange.source;
 
-	if (OtherActor != NULL && OtherActor != this && OtherActor != us)
+	if (OtherActor != NULL && OtherActor != this && OtherActor != us && us != NULL)
 	{
 		if (OtherActor->Implements<UDamagable>())
 		{

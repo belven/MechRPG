@@ -17,7 +17,6 @@
 
 #define mActorLocation GetCharacter()->GetActorLocation()
 #define mActorRotation GetCharacter()->GetActorRotation()
-//#define mTargetActor() target.asActor()
 #define mCurrentWeapon() GetBaseCharacter()->GetEquippedWeapon()
 #define mSphereTraceMulti(start, end, radius, ignore, hits) UKismetSystemLibrary::SphereTraceMulti(GetWorld(), start, end, radius, ETraceTypeQuery::TraceTypeQuery1, false, ignore, EDrawDebugTrace::ForOneFrame, hits,true)
 
@@ -41,7 +40,7 @@ ABaseAIController::ABaseAIController() : Super()
 void ABaseAIController::TargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
 	// Is the actor our current target?
-	if (Actor == Cast<AActor>(target))
+	if (*target == Actor)
 	{
 		// Update the lastKnowLocation, as regardless of if we see the target or not, we might re-adjust our movement to a better location
 		lastKnowLocation = Stimulus.StimulusLocation;

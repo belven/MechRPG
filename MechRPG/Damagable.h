@@ -25,8 +25,18 @@ public:
 		return Cast<AActor>(this);		
 	}
 
+	friend bool operator==(const IDamagable& lhs, const AActor& rhs)
+	{
+		return Cast<AActor>(&lhs) == &rhs;
+	}
+
+	friend bool operator!=(const IDamagable& lhs, const AActor& rhs)
+	{
+		return !(lhs == rhs);
+	}
+
 	operator AActor*() 
 	{
-		return Cast<AActor>(this);
+		return asActor();
 	}
 };
