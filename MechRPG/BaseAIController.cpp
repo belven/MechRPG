@@ -31,41 +31,58 @@ ABaseAIController::ABaseAIController() : Super()
 	PerceptionComponent->ConfigureSense(*sightConfig);
 	PerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &ABaseAIController::TargetPerceptionUpdated);
 
-	MyQuery = CreateDefaultSubobject<UEnvQuery>(TEXT("AIPerception Query"));
+	FindWeaponLocationQuery = CreateDefaultSubobject<UEnvQuery>(TEXT("AIPerception Query"));
 	static ConstructorHelpers::FObjectFinder<UEnvQuery> playerLocationQuery(TEXT("EnvQuery'/Game/TopDown/EQS_FindPlayer.EQS_FindPlayer'"));
 
 	if (playerLocationQuery.Succeeded())
 	{
-		MyQuery = playerLocationQuery.Object;
+		FindWeaponLocationQuery = playerLocationQuery.Object;
 	}
 }
 
 void ABaseAIController::TargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
+	// Is the actor our current target?
 	if (Actor == Cast<AActor>(target))
 	{
+		// Update the lastKnowLocation, as regardless of if we see the target or not, we might re-adjust our movement to a better location
 		lastKnowLocation = Stimulus.StimulusLocation;
 
+		// Did we loose sight of them?
 		if (!Stimulus.WasSuccessfullySensed())
 		{
+			// We can't see them
 			canSee = false;
+
+			// Move to their last seen location
+			FindViableCombatLocationRequest.Execute(EEnvQueryRunMode::SingleResult, this, &ABaseAIController::MyQueryFinished);
+
 			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "I don't see you!");
-			MyQueryRequest.Execute(EEnvQueryRunMode::SingleResult, this, &ABaseAIController::MyQueryFinished);
 		}
+		// Have we seen them again?
 		else {
+			// We can see them again
 			canSee = true;
+
 			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "I see you!");
 		}
 
 	}
+	// If we don't have a target, then check if this is a new viable target
 	else if (target == NULL)
 	{
+		// We're currently assuming the target is a Mech, however this might not be the case in the future
 		AMechRPGCharacter* mech = mAsMech(Actor);
+
 		if (mech != NULL) {
+
+			// Are we enemies with the perceived actor?
 			if (mech->GetRelationship(mAsMech(GetCharacter()), mech->GetGameInstance()) == ERelationshipType::Enemy)
 			{
+				// Update our target and set that we can see them
 				target = mech;
 				canSee = true;
+
 				//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "I see you!");
 			}
 		}
@@ -74,8 +91,13 @@ void ABaseAIController::TargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimu
 
 void ABaseAIController::MyQueryFinished(TSharedPtr<FEnvQueryResult> Result)
 {
+	// Did we find a new location to move to?
 	if (Result->IsSuccessful()) {
-		FVector loc = Result->GetItemAsLocation(0);
+
+		// Get the first item as a location, this will be the highest scoring location in the array, as it orders items by score
+		const FVector loc = Result->GetItemAsLocation(0);
+
+		// Move to the location found
 		MoveToLocation(loc);
 	}
 }
@@ -92,52 +114,47 @@ void ABaseAIController::Tick(float DeltaTime)
 
 		LookAt(targetLocation);
 
+		// Can we see our current target?
 		if (canSee) {
+
+			// Check for any abilities we can use
 			for (UBaseAbility* ability : mAsMech(GetCharacter())->GetAbilities())
 			{
 				if (!ability->IsOnCooldown())
 				{
 					ability->Use(target);
 					abilityUsed = true;
+					break;
 				}
 			}
 
+			// if we haven't used an ability and have a valid weapon, attack the target
 			if (!abilityUsed && weapon != NULL) {
+
+				// Check we're in range of the target
 				if (FVector::Dist(mActorLocation, targetLocation) <= weapon->GetWeaponData().range) {
-					FireShot(mActorRotation.Vector());
+					AttackLocation(mActorRotation.Vector());
 				}
+				// Otherwise move towards the targets current location
 				else
 				{
+					// We updated the lastKnowLocation here, as we can still see the target and simply need to move forwards to attack again
 					lastKnowLocation = mAsMech(target)->GetActorLocation();
-					MyQueryRequest.Execute(EEnvQueryRunMode::SingleResult, this, &ABaseAIController::MyQueryFinished);
+					FindViableCombatLocationRequest.Execute(EEnvQueryRunMode::SingleResult, this, &ABaseAIController::MyQueryFinished);
 				}
 			}
 		}
+		// We can't see the target, make sure we're not already trying to move to the target
 		else if (!GetCharacter()->GetCharacterMovement()->IsMovementInProgress())
 		{
+			// Move to the last known location
 			lastKnowLocation = mAsMech(target)->GetActorLocation();
-			MyQueryRequest.Execute(EEnvQueryRunMode::SingleResult, this, &ABaseAIController::MyQueryFinished);
+			FindViableCombatLocationRequest.Execute(EEnvQueryRunMode::SingleResult, this, &ABaseAIController::MyQueryFinished);
 		}
 	}
 }
 
-TArray<FHitResult> ABaseAIController::CheckLoSToTarget() {
-	TArray<AActor*> ignore;
-	ignore.Add(GetCharacter());
-
-	const ACharacter* targetA = Cast<ACharacter>(target);
-
-	TArray<FHitResult> hits;
-	const FVector start = mActorLocation;
-	const FVector end = targetA->GetActorLocation();
-	const float radius = targetA->GetCapsuleComponent()->GetScaledCapsuleRadius() * 0.7;
-
-	UKismetSystemLibrary::SphereTraceMulti(GetWorld(), start, end, radius, ETraceTypeQuery::TraceTypeQuery1, false, ignore, EDrawDebugTrace::None, hits, true);
-
-	return hits;
-}
-
-void ABaseAIController::FireShot(FVector FireDirection)
+void ABaseAIController::AttackLocation(FVector FireDirection)
 {
 	mCurrentWeapon()->UseWeapon(FireDirection);
 }
@@ -162,17 +179,23 @@ void ABaseAIController::OnPossess(APawn* aPawn)
 
 	int32 range = 3000;
 
+	// Set up sight config for AI perception
 	sightConfig->SightRadius = range * 0.9;
 	sightConfig->LoseSightRadius = range;
 	sightConfig->PeripheralVisionAngleDegrees = 90.0f;
+
+	// This section is important, as without setting at least bDetectNeutrals to true, the AI will never perceive anything
+	// Still not tried to set this up correctly at all
 	sightConfig->DetectionByAffiliation.bDetectEnemies = true;
 	sightConfig->DetectionByAffiliation.bDetectFriendlies = true;
 	sightConfig->DetectionByAffiliation.bDetectNeutrals = true;
 	PerceptionComponent->ConfigureSense(*sightConfig);
 
+	// Add the AIs character to things that can be perceived by this sight config.
 	UAIPerceptionSystem::RegisterPerceptionStimuliSource(this, sightConfig->GetSenseImplementation(), aPawn);
 
-	MyQueryRequest = FEnvQueryRequest(MyQuery, this);
+	// Set up our EQS query 
+	FindViableCombatLocationRequest = FEnvQueryRequest(FindWeaponLocationQuery, this);
 }
 
 void ABaseAIController::EventTriggered(UBaseEvent* inEvent)
@@ -194,10 +217,11 @@ void ABaseAIController::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Get the query we made in blueprints
 	UEnvQuery* playerLocationQuery = LoadObject<UEnvQuery>(this, TEXT("EnvQuery'/Game/TopDown/EQS_FindPlayer.EQS_FindPlayer'"));
 
 	if (playerLocationQuery != NULL)
 	{
-		MyQuery = playerLocationQuery;
+		FindWeaponLocationQuery = playerLocationQuery;
 	}
 }

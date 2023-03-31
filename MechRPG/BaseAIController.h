@@ -28,8 +28,7 @@ public:
 	void MyQueryFinished(TSharedPtr<FEnvQueryResult> Result);
 
 	virtual void Tick(float DeltaTime) override;
-	TArray<FHitResult> CheckLoSToTarget();
-	void FireShot(FVector FireDirection);
+	void AttackLocation(FVector FireDirection);
 	void LookAt(FVector lookAtLocation);
 	virtual void OnPossess(APawn* aPawn) override;
 	virtual void EventTriggered(UBaseEvent* inEvent) override;
