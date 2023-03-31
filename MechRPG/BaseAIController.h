@@ -32,7 +32,6 @@ public:
 	void LookAt(FVector lookAtLocation);
 	virtual void OnPossess(APawn* aPawn) override;
 	virtual void EventTriggered(UBaseEvent* inEvent) override;
-	virtual void BeginPlay() override;
 
 	FVector GetLastKnowLocation() { return lastKnowLocation;  }
 
@@ -46,8 +45,8 @@ private:
 		UAISenseConfig_Sight* sightConfig;
 
 	UPROPERTY()
-		UEnvQuery* MyQuery;
+		UEnvQuery* FindWeaponLocationQuery;
 
 	UPROPERTY()
-		FEnvQueryRequest MyQueryRequest;
+		FEnvQueryRequest FindViableCombatLocationRequest;
 };

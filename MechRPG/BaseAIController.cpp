@@ -212,16 +212,3 @@ void ABaseAIController::EventTriggered(UBaseEvent* inEvent)
 		}
 	}
 }
-
-void ABaseAIController::BeginPlay()
-{
-	Super::BeginPlay();
-
-	// Get the query we made in blueprints
-	UEnvQuery* playerLocationQuery = LoadObject<UEnvQuery>(this, TEXT("EnvQuery'/Game/TopDown/EQS_FindPlayer.EQS_FindPlayer'"));
-
-	if (playerLocationQuery != NULL)
-	{
-		FindWeaponLocationQuery = playerLocationQuery;
-	}
-}
