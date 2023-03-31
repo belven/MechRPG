@@ -1,14 +1,14 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "EnvironmentQuery/EnvQueryTest.h"
-#include "EnvQueryTest_WeaponDistance.generated.h"
+#include "EnvQueryTest_WeaponLoS.generated.h"
 
 UCLASS()
-class MECHRPG_API UEnvQueryTest_WeaponDistance : public UEnvQueryTest
+class MECHRPG_API UEnvQueryTest_WeaponLoS : public UEnvQueryTest
 {
 	GENERATED_BODY()
 public:
-	UEnvQueryTest_WeaponDistance(const FObjectInitializer& ObjectInitializer);
+	UEnvQueryTest_WeaponLoS(const FObjectInitializer& ObjectInitializer);
 
 	UPROPERTY(EditDefaultsOnly, Category = Trace)
 		TSubclassOf<UEnvQueryContext> Context;

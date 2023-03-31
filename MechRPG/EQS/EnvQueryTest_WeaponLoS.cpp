@@ -1,12 +1,13 @@
-#include "EnvQueryTest_WeaponDistance.h"
-
-#include "BaseAIController.h"
-#include "MechRPGCharacter.h"
+#include "EnvQueryTest_WeaponLoS.h"
+#include "../BaseAIController.h"
+#include "../MechRPGCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "EnvironmentQuery/Items/EnvQueryItemType_VectorBase.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-UEnvQueryTest_WeaponDistance::UEnvQueryTest_WeaponDistance(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+#define mSphereTraceMulti(start, end, radius, hits) UKismetSystemLibrary::SphereTraceMulti(GetWorld(), start, end, radius, ETraceTypeQuery::TraceTypeQuery1, true, ignore, EDrawDebugTrace::None, hits, true);
+
+UEnvQueryTest_WeaponLoS::UEnvQueryTest_WeaponLoS(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	ValidItemType = UEnvQueryItemType_VectorBase::StaticClass();
 	FilterType = EEnvTestFilterType::Range;
@@ -14,7 +15,7 @@ UEnvQueryTest_WeaponDistance::UEnvQueryTest_WeaponDistance(const FObjectInitiali
 	ScoringEquation = EEnvTestScoreEquation::InverseLinear;
 }
 
-void UEnvQueryTest_WeaponDistance::RunTest(FEnvQueryInstance& QueryInstance) const
+void UEnvQueryTest_WeaponLoS::RunTest(FEnvQueryInstance& QueryInstance) const
 {
 	UObject* QueryOwner = QueryInstance.Owner.Get();
 	if (QueryOwner == nullptr)
@@ -50,16 +51,22 @@ void UEnvQueryTest_WeaponDistance::RunTest(FEnvQueryInstance& QueryInstance) con
 			if (inRange) {
 				ItemLocation.Z += mech->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
 
-				UKismetSystemLibrary::SphereTraceMulti(GetWorld(), ItemLocation, targetLocation, mAsMech(con->GetTarget())->GetCapsuleComponent()->GetScaledCapsuleRadius()* 1.5, ETraceTypeQuery::TraceTypeQuery1, true, ignore, EDrawDebugTrace::None, hits, true);
+				mSphereTraceMulti(ItemLocation, targetLocation, mAsMech(con->GetTarget())->GetCapsuleComponent()->GetScaledCapsuleRadius()* 1.5, hits);
 
 				bool canSee = true;
 
 				for(FHitResult hit : hits)
 				{
-					if(hit.bBlockingHit && hit.GetActor() != Cast<AActor>(con->GetTarget()))
+					if(hit.bBlockingHit)
 					{
-						canSee = false;
-						break;
+						if (hit.GetActor() != Cast<AActor>(con->GetTarget())) {
+							canSee = false;
+							break;
+						}
+						else
+						{
+							break;
+						}
 					}
 				}
 				
@@ -78,16 +85,15 @@ void UEnvQueryTest_WeaponDistance::RunTest(FEnvQueryInstance& QueryInstance) con
 				It.ForceItemState(EEnvItemStatus::Failed, 0);
 			}
 		}
-
 	}
 }
 
-FText UEnvQueryTest_WeaponDistance::GetDescriptionTitle() const
+FText UEnvQueryTest_WeaponLoS::GetDescriptionTitle() const
 {
-	return FText::FromString(FString::Printf(TEXT("Weapon Distance Test")));
+	return FText::FromString(FString::Printf(TEXT("Weapon Distance and Line of Sight Test")));
 }
 
-FText UEnvQueryTest_WeaponDistance::GetDescriptionDetails() const
+FText UEnvQueryTest_WeaponLoS::GetDescriptionDetails() const
 {
 	return DescribeFloatTestParams();
 }

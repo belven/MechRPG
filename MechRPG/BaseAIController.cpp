@@ -27,8 +27,8 @@ ABaseAIController::ABaseAIController() : Super()
 {
 	PerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerception Component"));
 	sightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Config"));
-	PerceptionComponent->ConfigureSense(*sightConfig);
 	PerceptionComponent->SetDominantSense(sightConfig->GetSenseImplementation());
+	PerceptionComponent->ConfigureSense(*sightConfig);
 	PerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &ABaseAIController::TargetPerceptionUpdated);
 
 	MyQuery = CreateDefaultSubobject<UEnvQuery>(TEXT("AIPerception Query"));
@@ -49,12 +49,12 @@ void ABaseAIController::TargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimu
 		if (!Stimulus.WasSuccessfullySensed())
 		{
 			canSee = false;
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "I don't see you!");
+			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "I don't see you!");
 			MyQueryRequest.Execute(EEnvQueryRunMode::SingleResult, this, &ABaseAIController::MyQueryFinished);
 		}
 		else {
 			canSee = true;
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "I see you!");
+			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "I see you!");
 		}
 
 	}
@@ -66,7 +66,7 @@ void ABaseAIController::TargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimu
 			{
 				target = mech;
 				canSee = true;
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "I see you!");
+				//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "I see you!");
 			}
 		}
 	}
@@ -90,7 +90,7 @@ void ABaseAIController::Tick(float DeltaTime)
 		const UWeapon* weapon = mCurrentWeapon();
 		bool abilityUsed = false;
 
-		LookAt(targetLocation);		
+		LookAt(targetLocation);
 
 		if (canSee) {
 			for (UBaseAbility* ability : mAsMech(GetCharacter())->GetAbilities())
@@ -103,7 +103,7 @@ void ABaseAIController::Tick(float DeltaTime)
 			}
 
 			if (!abilityUsed && weapon != NULL) {
-				if (FVector::Dist(mActorLocation, targetLocation) <= weapon->GetWeaponData().range) {					
+				if (FVector::Dist(mActorLocation, targetLocation) <= weapon->GetWeaponData().range) {
 					FireShot(mActorRotation.Vector());
 				}
 				else
@@ -113,10 +113,10 @@ void ABaseAIController::Tick(float DeltaTime)
 				}
 			}
 		}
-		else if(!GetCharacter()->GetCharacterMovement()->IsMovementInProgress())
+		else if (!GetCharacter()->GetCharacterMovement()->IsMovementInProgress())
 		{
 			lastKnowLocation = mAsMech(target)->GetActorLocation();
-			MyQueryRequest.Execute(EEnvQueryRunMode::SingleResult, this, &ABaseAIController::MyQueryFinished);			
+			MyQueryRequest.Execute(EEnvQueryRunMode::SingleResult, this, &ABaseAIController::MyQueryFinished);
 		}
 	}
 }
@@ -130,7 +130,7 @@ TArray<FHitResult> ABaseAIController::CheckLoSToTarget() {
 	TArray<FHitResult> hits;
 	const FVector start = mActorLocation;
 	const FVector end = targetA->GetActorLocation();
-	const float radius = targetA->GetCapsuleComponent()->GetScaledCapsuleRadius() * 0.7;	
+	const float radius = targetA->GetCapsuleComponent()->GetScaledCapsuleRadius() * 0.7;
 
 	UKismetSystemLibrary::SphereTraceMulti(GetWorld(), start, end, radius, ETraceTypeQuery::TraceTypeQuery1, false, ignore, EDrawDebugTrace::None, hits, true);
 
@@ -192,7 +192,7 @@ void ABaseAIController::EventTriggered(UBaseEvent* inEvent)
 
 void ABaseAIController::BeginPlay()
 {
-	Super::BeginPlay();	
+	Super::BeginPlay();
 
 	UEnvQuery* playerLocationQuery = LoadObject<UEnvQuery>(this, TEXT("EnvQuery'/Game/TopDown/EQS_FindPlayer.EQS_FindPlayer'"));
 
